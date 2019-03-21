@@ -1,0 +1,7 @@
+package swagger
+
+type PayportAssociationDetailsResponse struct {
+	Data *PayportAssociation `json:"data,omitempty"`
+
+	Links *Links `json:"links,omitempty"`
+}
