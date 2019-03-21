@@ -13,6 +13,6 @@ type ReturnAdmissionStatus string
 
 // List of ReturnAdmissionStatus
 const (
-	CONFIRMED ReturnAdmissionStatus = "confirmed"
-	FAILED    ReturnAdmissionStatus = "failed"
+	RETURN_ADMISSION_STATUS_CONFIRMED ReturnAdmissionStatus = "confirmed"
+	RETURN_ADMISSION_STATUS_FAILED    ReturnAdmissionStatus = "failed"
 )

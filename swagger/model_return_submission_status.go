@@ -13,13 +13,13 @@ type ReturnSubmissionStatus string
 
 // List of ReturnSubmissionStatus
 const (
-	ACCEPTED            ReturnSubmissionStatus = "accepted"
-	LIMIT_CHECK_PENDING ReturnSubmissionStatus = "limit_check_pending"
-	LIMIT_CHECK_FAILED  ReturnSubmissionStatus = "limit_check_failed"
-	LIMIT_CHECK_PASSED  ReturnSubmissionStatus = "limit_check_passed"
-	RELEASED_TO_GATEWAY ReturnSubmissionStatus = "released_to_gateway"
-	DELIVERY_CONFIRMED  ReturnSubmissionStatus = "delivery_confirmed"
-	DELIVERY_FAILED     ReturnSubmissionStatus = "delivery_failed"
-	SUBMITTED           ReturnSubmissionStatus = "submitted"
-	VALIDATION_PENDING  ReturnSubmissionStatus = "validation_pending"
+	RETURN_SUBMISSION_STATUS_ACCEPTED            ReturnSubmissionStatus = "accepted"
+	RETURN_SUBMISSION_STATUS_LIMIT_CHECK_PENDING ReturnSubmissionStatus = "limit_check_pending"
+	RETURN_SUBMISSION_STATUS_LIMIT_CHECK_FAILED  ReturnSubmissionStatus = "limit_check_failed"
+	RETURN_SUBMISSION_STATUS_LIMIT_CHECK_PASSED  ReturnSubmissionStatus = "limit_check_passed"
+	RETURN_SUBMISSION_STATUS_RELEASED_TO_GATEWAY ReturnSubmissionStatus = "released_to_gateway"
+	RETURN_SUBMISSION_STATUS_DELIVERY_CONFIRMED  ReturnSubmissionStatus = "delivery_confirmed"
+	RETURN_SUBMISSION_STATUS_DELIVERY_FAILED     ReturnSubmissionStatus = "delivery_failed"
+	RETURN_SUBMISSION_STATUS_SUBMITTED           ReturnSubmissionStatus = "submitted"
+	RETURN_SUBMISSION_STATUS_VALIDATION_PENDING  ReturnSubmissionStatus = "validation_pending"
 )
