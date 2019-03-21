@@ -39,129 +39,79 @@ paths:
         - Payments
       x-access:
         - Public
-      parameters:
-        - name: page[number]
-          in: query
-          description: Which page to select
-          required: false
-          type: string
-          minimum: 0
-          pattern: "$[A-z0-9]{4}^"
-        - name: page[size]
-          in: query
-          description: Number of items to select
-          required: false
-          type: integer
-          minimum: 0
-          maximum: 1000
-        - name: filter[organisation_id]
-          in: query
-          description: Filter by organisation id
-          required: false
-          type: array
-          items:
-            type: string
-            format: uuid
-        - name: filter[debtor_party.account_number]
-          in: query
-          required: false
-          type: string
-        - name: filter[debtor_party.bank_id]
-          in: query
-          required: false
-          type: string
-        - name: filter[beneficiary_party.account_number]
-          in: query
-          required: false
-          type: string
-        - name: filter[beneficiary_party.bank_id]
-          in: query
-          required: false
-          type: string
-        - name: filter[currency]
-          in: query
-          required: false
-          type: string
-        - name: filter[scheme_transaction_id]
-          in: query
-          required: false
-          type: string
-        - name: filter[payment_scheme]
-          in: query
-          required: false
-          type: string
-        - name: filter[payment_type]
-          in: query
-          required: false
-          type: string
-        - name: filter[processing_date_from]
-          in: query
-          required: false
-          type: string
-          format: date
-        - name: filter[processing_date_to]
-          in: query
-          required: false
-          type: string
-          format: date
-        - name: filter[unique_scheme_id]
-          in: query
-          required: false
-          type: string
-        - name: filter[amount]
-          in: query
-          required: false
-          type: string
-        - name: filter[reference]
-          in: query
-          required: false
-          type: string
-        - name: filter[submission.submission_date_from]
-          in: query
-          required: false
-          type: string
-          format: date-time
-        - name: filter[submission.submission_date_to]
-          in: query
-          required: false
-          type: string
-          format: date-time
-        - name: filter[submission.status]
-          in: query
-          description: Filter by submission status
-          required: false
-          type: string
-        - name: filter[submission.scheme_status_code]
-          description: Filter by submission scheme status code
-          in: query
-          required: false
-          type: string
-        - name: filter[admission.admission_date_from]
-          in: query
-          required: false
-          type: string
-          format: date-time
-        - name: filter[admission.admission_date_to]
-          in: query
-          required: false
-          type: string
-          format: date-time
-        - name: filter[admission.status]
-          in: query
-          description: Filter by admission status
-          required: false
-          type: string
-        - name: filter[admission.scheme_status_code]
-          description: Filter by admission scheme status code
-          in: query
-          required: false
-          type: string
 
       responses:
         200:
           description: List of payment details
           schema:
             $ref: "#/definitions/PaymentDetailsListResponse"
+
+  /payment/{id}:
+
+    put:
+      summary: Update payment
+      tags:
+        - Payments
+      consumes:
+        - application/vnd.api+json
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: Payment Id
+          required: true
+          type: string
+          format: uuid
+        - name: Payment update request
+          in: body
+          schema:
+            $ref: "#/definitions/PaymentUpdate"
+
+      responses:
+        201:
+          description: Payment update response
+          schema:
+            $ref: "#/definitions/PaymentUpdateResponse"
+
+        400:
+          description: Payment creation error
+          schema:
+            $ref: "#/definitions/ApiError"
+
+    get:
+      summary: Get payment
+      tags:
+        - Payments
+      parameters:
+        - name: id
+          in: path
+          description: Payment Id
+          required: true
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: Payment details
+          schema:
+            $ref: "#/definitions/Payment"
+
+    delete:
+      summary: Delete payment
+      tags:
+        - Payments
+      consumes:
+        - application/vnd.api+json
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: Payment Id
+          required: true
+          type: string
+          format: uuid
+      responses:
+        204:
+          description: Organisation deleted
 
 definitions:
 
@@ -3411,6 +3361,12 @@ definitions:
           response:
             type: string
 
+  PaymentUpdate:
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/Payment'
+
   PaymentCreation:
     type: object
     properties:
@@ -3488,6 +3444,14 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/ReturnSubmission'
+
+  PaymentUpdateResponse:
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/Payment'
+      links:
+        $ref: '#/definitions/Links'
 
   PaymentCreationResponse:
     type: object

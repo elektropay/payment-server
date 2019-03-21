@@ -61,6 +61,27 @@ var routes = Routes{
 	},
 
 	Route{
+		"PaymentIdDelete",
+		strings.ToUpper("Delete"),
+		"/v1/payment/{id}",
+		handler.PaymentIdDelete,
+	},
+
+	Route{
+		"PaymentIdGet",
+		strings.ToUpper("Get"),
+		"/v1/payment/{id}",
+		handler.PaymentIdGet,
+	},
+
+	Route{
+		"PaymentIdPut",
+		strings.ToUpper("Put"),
+		"/v1/payment/{id}",
+		handler.PaymentIdPut,
+	},
+
+	Route{
 		"PaymentsGet",
 		strings.ToUpper("Get"),
 		"/v1/payments",

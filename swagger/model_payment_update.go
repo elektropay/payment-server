@@ -9,8 +9,6 @@
 
 package swagger
 
-type ApprovalDetailsListResponse struct {
-	Data []ApprovalRequest `json:"data,omitempty"`
-
-	Links *Links `json:"links,omitempty"`
+type PaymentUpdate struct {
+	Data *Payment `json:"data,omitempty"`
 }
