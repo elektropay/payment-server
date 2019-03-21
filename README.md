@@ -6,3 +6,6 @@ take a look at real API: no delete
 
 * Security
 * HATEOAS
+
+
+Follow: https://github.com/golang-standards/project-layout
