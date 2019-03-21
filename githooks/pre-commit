@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 gofmt -s -w .
-
 goimports -w .
 
 fmtcount=`git ls-files | grep '.go$' | xargs gofmt -l 2>&1 | wc -l`
