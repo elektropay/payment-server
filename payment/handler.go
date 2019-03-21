@@ -21,7 +21,7 @@ func HandlerPaymentIdGet(w http.ResponseWriter, request *http.Request) {
 
 func HandlerPaymentIdPut(w http.ResponseWriter, request *http.Request) {
 	var payment swagger.PaymentUpdate
-	err := decodeRequest(payment, request)
+	err := decodeRequest(&payment, request)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -38,9 +38,18 @@ func HandlerPaymentsGet(w http.ResponseWriter, request *http.Request) {
 
 func HandlerPaymentsPost(w http.ResponseWriter, request *http.Request) {
 	var payment swagger.PaymentCreation
-	err := decodeRequest(payment, request)
+	err := decodeRequest(&payment, request)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = insert(payment)
+	if err != nil {
+		utils.Logger.Error("Unable to insert payment creation",
+			zap.String("paymentId", payment.Data.Id),
+			zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
