@@ -1,25 +1,25 @@
-package handler
+package payment
 
 import (
 	"encoding/json"
-	"github.com/teivah/payment-server/swagger"
 	"net/http"
 
+	"github.com/teivah/payment-server/swagger"
 	"github.com/teivah/payment-server/utils"
 	"go.uber.org/zap"
 )
 
-func PaymentIdDelete(w http.ResponseWriter, request *http.Request) {
+func HandlerPaymentIdDelete(w http.ResponseWriter, request *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
-func PaymentIdGet(w http.ResponseWriter, request *http.Request) {
+func HandlerPaymentIdGet(w http.ResponseWriter, request *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
-func PaymentIdPut(w http.ResponseWriter, request *http.Request) {
+func HandlerPaymentIdPut(w http.ResponseWriter, request *http.Request) {
 	var payment swagger.PaymentUpdate
 	err := decodeRequest(payment, request)
 	if err != nil {
@@ -31,12 +31,12 @@ func PaymentIdPut(w http.ResponseWriter, request *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func PaymentsGet(w http.ResponseWriter, request *http.Request) {
+func HandlerPaymentsGet(w http.ResponseWriter, request *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 
-func PaymentsPost(w http.ResponseWriter, request *http.Request) {
+func HandlerPaymentsPost(w http.ResponseWriter, request *http.Request) {
 	var payment swagger.PaymentCreation
 	err := decodeRequest(payment, request)
 	if err != nil {

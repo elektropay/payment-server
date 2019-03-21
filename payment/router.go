@@ -1,4 +1,4 @@
-package router
+package payment
 
 import (
 	"fmt"
@@ -9,7 +9,6 @@ import (
 	"github.com/teivah/payment-server/utils"
 
 	"github.com/gorilla/mux"
-	"github.com/teivah/payment-server/handler"
 )
 
 type Route struct {
@@ -65,34 +64,34 @@ var routes = Routes{
 		"PaymentIdDelete",
 		strings.ToUpper("Delete"),
 		"/v1/payment/{id}",
-		handler.PaymentIdDelete,
+		HandlerPaymentIdDelete,
 	},
 
 	Route{
 		"PaymentIdGet",
 		strings.ToUpper("Get"),
 		"/v1/payment/{id}",
-		handler.PaymentIdGet,
+		HandlerPaymentIdGet,
 	},
 
 	Route{
 		"PaymentIdPut",
 		strings.ToUpper("Put"),
 		"/v1/payment/{id}",
-		handler.PaymentIdPut,
+		HandlerPaymentIdPut,
 	},
 
 	Route{
 		"PaymentsGet",
 		strings.ToUpper("Get"),
 		"/v1/payments",
-		handler.PaymentsGet,
+		HandlerPaymentsGet,
 	},
 
 	Route{
 		"PaymentsPost",
 		strings.ToUpper("Post"),
 		"/v1/payments",
-		handler.PaymentsPost,
+		HandlerPaymentsPost,
 	},
 }
