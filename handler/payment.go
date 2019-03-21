@@ -53,7 +53,10 @@ func decodeRequest(v interface{}, request *http.Request) error {
 
 	err := decoder.Decode(&v)
 	if err != nil {
-		utils.Logger.Error("Error while decoding request", zap.Error(err))
+		utils.Logger.Error(
+
+
+			"Error while decoding request", zap.Error(err))
 		return err
 	}
 
