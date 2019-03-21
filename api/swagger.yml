@@ -181,117 +181,6 @@ definitions:
           filter:
             type: string
 
-  AceDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/Ace'
-      links:
-        $ref: '#/definitions/Links'
-
-  #Versioning, Audit and Approval
-  #===
-
-  ApprovalRequest:
-    type: object
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        type: object
-        properties:
-          record_type:
-            type: string
-            pattern: ^[A-Za-z]*$
-          record_id:
-            type: string
-            format: uuid
-          record_orgid:
-            type: string
-            format: uuid
-          record_version:
-            type: integer
-            minimum: 0
-          action:
-            type: string
-            pattern: ^[A-Za-z]*$
-          status:
-            type: string
-            pattern: ^[A-Za-z]*$
-          actioned_by:
-            type: string
-            format: uuid
-          action_time:
-            type: string
-            format: 'date-time'
-            x-nullable: true
-          before_data:
-            type: object
-          after_data:
-            type: object
-
-  ApprovalDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/ApprovalRequest'
-      links:
-        $ref: '#/definitions/Links'
-
-
-  AuditEntry:
-    type: object
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        type: object
-        properties:
-          record_type:
-            type: string
-            pattern: ^[A-Za-z]*$
-          record_id:
-            type: string
-            format: uuid
-          actioned_by:
-            type: string
-            format: uuid
-          action_time:
-            type: string
-            format: 'date-time'
-            x-nullable: true
-          description:
-            type: string
-            pattern: ^[A-Za-z0-9 .,@:]*$
-          before_data:
-            type: object
-          after_data:
-            type: object
-
   SubscriptionAttributes:
     type: object
     properties:
@@ -341,49 +230,6 @@ definitions:
       name:
         type: string
 
-  OrganisationCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Organisation'
-
-  OrganisationUpdate:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Organisation'
-
-  OrganisationCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Organisation'
-      links:
-        $ref: '#/definitions/Links'
-
-  OrganisationDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Organisation'
-      links:
-        $ref: '#/definitions/Links'
-
-  OrganisationDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/Organisation'
-      links:
-        $ref: '#/definitions/Links'
-
-  #Security info
-  #===
-  #User, role and security entries for individual users on the platform
-
-  #User records
   User:
     type: object
     properties:
@@ -413,39 +259,6 @@ definitions:
               type: string
               format: uuid
 
-  UserCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/User'
-
-  UserCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/User'
-      links:
-        $ref: '#/definitions/Links'
-
-  UserDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/User'
-      links:
-        $ref: '#/definitions/Links'
-
-  UserDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/User'
-      links:
-        $ref: '#/definitions/Links'
-
-
   #Roles
   Role:
     type: object
@@ -470,38 +283,6 @@ definitions:
       name:
         type: string
 
-  RoleCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Role'
-
-  RoleCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Role'
-      links:
-        $ref: '#/definitions/Links'
-
-  RoleDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Role'
-      links:
-        $ref: '#/definitions/Links'
-
-  RoleDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/Role'
-      links:
-        $ref: '#/definitions/Links'
-
   #Credential
   Credential:
     type: object
@@ -519,56 +300,6 @@ definitions:
       client_secret:
         type: string
 
-  CredentialCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/CredentialSecret'
-      links:
-        $ref: '#/definitions/Links'
-
-  UserCredentialListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/Credential'
-      links:
-        $ref: '#/definitions/Links'
-
-  #Ace
-  AceCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Ace'
-
-  AceCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Ace'
-      links:
-        $ref: '#/definitions/Links'
-
-  AceDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Ace'
-      links:
-        $ref: '#/definitions/Links'
-
-  UserRoleListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/Role'
-      links:
-        $ref: '#/definitions/Links'
   Subscription:
     type: object
     properties:
@@ -586,40 +317,6 @@ definitions:
         format: uuid
       attributes:
         $ref: "#/definitions/SubscriptionAttributes"
-
-  SubscriptionCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Subscription'
-
-  SubscriptionCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Subscription'
-      links:
-        $ref: '#/definitions/Links'
-
-  SubscriptionDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Subscription'
-      links:
-        $ref: '#/definitions/Links'
-
-  SubscriptionDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/Subscription'
-      links:
-        $ref: '#/definitions/Links'
-
-  #Organisation->Associations
 
   Association:
     type: object
@@ -670,38 +367,6 @@ definitions:
       starling_account_name:
         type: string
 
-  AssociationCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/NewAssociation'
-
-  AssociationCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Association'
-      links:
-        $ref: '#/definitions/Links'
-
-  AssociationDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Association'
-      links:
-        $ref: '#/definitions/Links'
-
-  AssociationDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/Association'
-      links:
-        $ref: '#/definitions/Links'
-
   PayportAssociation:
     type: object
     properties:
@@ -738,118 +403,6 @@ definitions:
     enum:
       - settling
       - non_settling
-
-  PayportAssociationCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/PayportAssociation'
-
-  PayportAssociationCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/PayportAssociation'
-      links:
-        $ref: '#/definitions/Links'
-
-  PayportAssociationDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/PayportAssociation'
-      links:
-        $ref: '#/definitions/Links'
-
-  PayportAssociationDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/PayportAssociation'
-      links:
-        $ref: '#/definitions/Links'
-
-  ResourceType:
-    type: string
-    enum:
-      - payport_associations
-      - limits
-      - bacs_associations
-
-  LimitCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Limit'
-
-  LimitCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Limit'
-
-  LimitDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/Limit'
-      links:
-        $ref: '#/definitions/Links'
-      meta:
-        $ref: '#/definitions/RecordCount'
-
-  LimitDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Limit'
-
-  LimitAmendment:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Limit'
-
-  Limit:
-    type: object
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z_]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        type: object
-        properties:
-          gateway:
-            type: string
-            pattern: ^[A-Za-z_\-]*$
-          scheme:
-            type: string
-            pattern: ^[A-Za-z_\-]*$
-          amount:
-            type: string
-            pattern: ^[0-9.]{0,20}$
-          settlement_cycle_type:
-            $ref: '#/definitions/SettlementCycleType'
-
-  SettlementCycleType:
-    type: string
-    enum:
-      - daily
-      - per_scheme
-
 
   BacsAssociation:
     type: object
@@ -936,38 +489,6 @@ definitions:
             type: string
             format: uuid
 
-  BacsAssociationCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/BacsNewAssociation'
-
-  BacsAssociationCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/BacsAssociation'
-      links:
-        $ref: '#/definitions/Links'
-
-  BacsAssociationDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/BacsAssociation'
-      links:
-        $ref: '#/definitions/Links'
-
-  BacsAssociationDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/BacsAssociation'
-      links:
-        $ref: '#/definitions/Links'
-
   VocalinkReportAssociation:
     type: object
     properties:
@@ -1041,163 +562,6 @@ definitions:
       bacs_service_user_number:
         type: string
 
-  VocalinkReportAssociationCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/NewVocalinkReportAssociation'
-
-  VocalinkReportAssociationCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/VocalinkReportAssociation'
-      links:
-        $ref: '#/definitions/Links'
-
-  VocalinkReportAssociationDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/VocalinkReportAssociation'
-      links:
-        $ref: '#/definitions/Links'
-
-  VocalinkReportAssociationDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/VocalinkReportAssociation'
-      links:
-        $ref: '#/definitions/Links'
-
-  KeyCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Key'
-
-  KeyCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Key'
-      links:
-        $ref: '#/definitions/Links'
-
-  KeyDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Key'
-      links:
-        $ref: '#/definitions/Links'
-
-  KeyDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/Key'
-      links:
-        $ref: '#/definitions/Links'
-
-  Key:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        $ref: "#/definitions/KeyAttributes"
-
-  KeyAttributes:
-    type: object
-    properties:
-      subject:
-        type: string
-      private_key:
-        type: string
-      public_key:
-        type: string
-      description:
-        type: string
-      certificate_signing_request:
-        type: string
-
-  CertificateCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Certificate'
-
-  CertificateCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Certificate'
-      links:
-        $ref: '#/definitions/Links'
-
-  CertificateDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Certificate'
-      links:
-        $ref: '#/definitions/Links'
-
-  CertificateDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/Certificate'
-      links:
-        $ref: '#/definitions/Links'
-
-  Certificate:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        $ref: "#/definitions/CertificateAttributes"
-
-  CertificateAttributes:
-    type: object
-    required:
-      - certificate
-    properties:
-      certificate:
-        type: string
-      issuing_certificates:
-        type: array
-        items:
-          type: string
-
-
   SepaInstantAssociation:
     type: object
     properties:
@@ -1242,38 +606,6 @@ definitions:
       bic:
         type: string
 
-  SepaInstantAssociationCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/NewSepaInstantAssociation'
-
-  SepaInstantAssociationCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/SepaInstantAssociation'
-      links:
-        $ref: '#/definitions/Links'
-
-  SepaInstantAssociationDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/SepaInstantAssociation'
-      links:
-        $ref: '#/definitions/Links'
-
-  SepaInstantAssociationDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/SepaInstantAssociation'
-      links:
-        $ref: '#/definitions/Links'
-
   SepaSctAssociation:
     type: object
     properties:
@@ -1313,38 +645,6 @@ definitions:
     properties:
       bic:
         type: string
-
-  SepaSctAssociationCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/NewSepaSctAssociation'
-
-  SepaSctAssociationCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/SepaSctAssociation'
-      links:
-        $ref: '#/definitions/Links'
-
-  SepaSctAssociationDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/SepaSctAssociation'
-      links:
-        $ref: '#/definitions/Links'
-
-  SepaSctAssociationDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/SepaSctAssociation'
-      links:
-        $ref: '#/definitions/Links'
 
   Payment:
     type: object
@@ -3461,59 +2761,11 @@ definitions:
       links:
         $ref: '#/definitions/Links'
 
-  ReturnCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReturnPayment'
-      links:
-        $ref: '#/definitions/Links'
-
-  ReversalCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReversalPayment'
-      links:
-        $ref: '#/definitions/Links'
-
-  ReturnReversalCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReversalReturn'
-      links:
-        $ref: '#/definitions/Links'
-
   PaymentDetailsResponse:
     type: object
     properties:
       data:
         $ref: '#/definitions/Payment'
-      links:
-        $ref: '#/definitions/Links'
-
-  ReturnDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReturnPayment'
-      links:
-        $ref: '#/definitions/Links'
-
-  ReversalDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReversalPayment'
-      links:
-        $ref: '#/definitions/Links'
-
-  ReturnReversalDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReversalReturn'
       links:
         $ref: '#/definitions/Links'
 
@@ -3527,137 +2779,6 @@ definitions:
       links:
         $ref: '#/definitions/Links'
 
-  PaymentAdmissionCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/PaymentAdmission'
-      links:
-        $ref: '#/definitions/Links'
-
-
-  PaymentSubmissionCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/PaymentSubmission'
-      links:
-        $ref: '#/definitions/Links'
-
-  ReturnSubmissionCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReturnSubmission'
-      links:
-        $ref: '#/definitions/Links'
-
-  ReturnAdmissionCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReturnAdmission'
-      links:
-        $ref: '#/definitions/Links'
-
-  ReversalAdmissionCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReversalAdmission'
-      links:
-        $ref: '#/definitions/Links'
-
-  ReturnReversalAdmissionCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReturnReversalAdmission'
-      links:
-        $ref: '#/definitions/Links'
-
-  PaymentAdmissionDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/PaymentAdmission'
-      links:
-        $ref: '#/definitions/Links'
-
-  PaymentSubmissionDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/PaymentSubmission'
-      links:
-        $ref: '#/definitions/Links'
-
-  ReturnSubmissionDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReturnSubmission'
-      links:
-        $ref: '#/definitions/Links'
-
-  ReturnAdmissionDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReturnAdmission'
-      links:
-        $ref: '#/definitions/Links'
-
-  ReversalAdmissionDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReversalAdmission'
-      links:
-        $ref: '#/definitions/Links'
-
-  ReturnReversalAdmissionDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReturnReversalAdmission'
-      links:
-        $ref: '#/definitions/Links'
-
-  PaymentSubmissionDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/PaymentSubmission'
-      links:
-        $ref: '#/definitions/Links'
-
-  PaymentSubmissionValidationCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/PaymentSubmissionValidation'
-
-  ReturnSubmissionValidationCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReturnSubmissionValidation'
-
-  PaymentSubmissionValidationCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/PaymentSubmissionValidation'
-
-  ReturnSubmissionValidationCreationResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReturnSubmissionValidation'
-
   RelationshipLinks:
     type: object
     properties:
@@ -3666,44 +2787,7 @@ definitions:
         items:
           $ref: '#/definitions/RelationshipData'
 
-  PaymentSubmittedEvent:
-    type: object
-    properties:
-      payment_submission:
-        $ref: '#/definitions/PaymentSubmission'
-      payment:
-        $ref: '#/definitions/Payment'
-
-  ReturnSubmittedEvent:
-    type: object
-    properties:
-      payment:
-        $ref: '#/definitions/Payment'
-      return_payment:
-        $ref: '#/definitions/ReturnPayment'
-      return_submission:
-        $ref: '#/definitions/ReturnSubmission'
-
   RelationshipData:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-
-  RelationshipsResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/Relationship'
-      links:
-        $ref: '#/definitions/Links'
-
-  Relationship:
     type: object
     properties:
       type:
@@ -3794,48 +2878,6 @@ definitions:
             currency:
               type: string
 
-  PositionDetailsListResponse:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/Position'
-
-  Position:
-    type: object
-    required:
-      - id
-      - organisation_id
-      - attributes
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z_]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        type: object
-        properties:
-          scheme:
-            type: string
-            pattern: ^[A-Za-z_\-]*$
-          limit:
-            type: string
-            pattern: ^[0-9.]{0,20}$
-          position:
-            type: string
-            pattern: ^[0-9.]{0,20}$
-      links:
-        $ref: '#/definitions/Self'
-
   SettlementCycle:
     type: object
     required:
@@ -3857,12 +2899,3 @@ definitions:
           settlement_cycle_number:
             type: integer
             minimum: 1
-
-  SettlementCycleCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/SettlementCycle'
-
-  SettlementCycleCreationResponse:
-    type: object
