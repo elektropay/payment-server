@@ -11,7 +11,7 @@ if [ $fmtcount -gt 0 ]; then
 fi
 
 vetcount=`go vet ./... 2>&1  | wc -l`
-if [ $vetcount -gt 1 ]; then
+if [ $vetcount -gt 0 ]; then
     echo "Some files aren't passing vet heuristics, please run 'go vet ./...' to see the errors it flags and correct your source code before committing"
     exit 1
 fi
