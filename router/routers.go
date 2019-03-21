@@ -2,10 +2,11 @@ package router
 
 import (
 	"fmt"
-	"github.com/teivah/payment-server/utils"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/teivah/payment-server/utils"
 
 	"github.com/gorilla/mux"
 	"github.com/teivah/payment-server/handler"

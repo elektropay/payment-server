@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/spf13/viper"
 	"github.com/teivah/payment-server/router"
 	"github.com/teivah/payment-server/utils"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 func main() {

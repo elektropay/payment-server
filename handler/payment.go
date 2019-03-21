@@ -2,10 +2,11 @@ package handler
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/teivah/payment-server/swagger"
 	"github.com/teivah/payment-server/utils"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 func PaymentIdDelete(w http.ResponseWriter, request *http.Request) {

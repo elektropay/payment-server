@@ -2,9 +2,10 @@ package utils
 
 import (
 	"flag"
+	"log"
+
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"log"
 )
 
 func config() {
