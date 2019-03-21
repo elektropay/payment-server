@@ -1,12 +1,23 @@
 package payment
 
 import (
+	"context"
 	"encoding/json"
-	"net/http"
-
+	"fmt"
 	"github.com/teivah/payment-server/swagger"
 	"github.com/teivah/payment-server/utils"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.uber.org/zap"
+	bsonx "gopkg.in/mgo.v2/bson"
+	"net/http"
+)
+
+const (
+	logPostError = "Unable to insert payment creation in Mongo."
+)
+
+var (
+	responsePostError = []byte("Unable to handle payment creation.")
 )
 
 func HandlerPaymentIdDelete(w http.ResponseWriter, request *http.Request) {
@@ -27,6 +38,27 @@ func HandlerPaymentIdPut(w http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	ctx, _ := context.WithTimeout(context.Background(), mongoRequestTimeout)
+	id := payment.Data.Id
+	fmt.Printf("%v\n", id)
+	//hex := bson.ObjectIdHex(id)
+
+	res, err := mongoCollection.UpdateOne(ctx,
+		bson.M{"_id": bsonx.ObjectIdHex(id)},
+		bson.M{"$set": bson.M(bson.M{"payload": payment.Data})},
+	)
+
+	if err != nil {
+		utils.Logger.Error(logPostError,
+			zap.String("paymentId", payment.Data.Id),
+			zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write(responsePostError)
+		return
+	}
+
+	fmt.Printf("%v\n", res)
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
@@ -36,7 +68,7 @@ func HandlerPaymentsGet(w http.ResponseWriter, request *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func HandlerPaymentsPost(w http.ResponseWriter, request *http.Request) {
+func HandlerPaymentPost(w http.ResponseWriter, request *http.Request) {
 	var payment swagger.PaymentCreation
 	err := decodeRequest(&payment, request)
 	if err != nil {
@@ -44,14 +76,23 @@ func HandlerPaymentsPost(w http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	err = insert(payment)
+	ctx, _ := context.WithTimeout(context.Background(), mongoRequestTimeout)
+
+	res, err := mongoCollection.InsertOne(ctx,
+		bson.M{"payload": payment.Data},
+	)
+	//	&document{
+	//	Payload: payment.Data,
+	//})
 	if err != nil {
-		utils.Logger.Error("Unable to insert payment creation",
+		utils.Logger.Error(logPostError,
 			zap.String("paymentId", payment.Data.Id),
 			zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write(responsePostError)
 		return
 	}
+	fmt.Printf("%v\n", res.InsertedID)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

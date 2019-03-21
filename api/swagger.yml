@@ -9,6 +9,20 @@ basePath: /v1
 paths:
   /payments:
 
+    get:
+      summary: List payments
+      tags:
+        - Payments
+      x-access:
+        - Public
+
+      responses:
+        200:
+          description: List of payment details
+          schema:
+            $ref: "#/definitions/PaymentDetailsListResponse"
+
+  /payment:
     post:
       summary: Create payment
       tags:
@@ -32,19 +46,6 @@ paths:
           description: Payment creation error
           schema:
             $ref: "#/definitions/ApiError"
-
-    get:
-      summary: List payments
-      tags:
-        - Payments
-      x-access:
-        - Public
-
-      responses:
-        200:
-          description: List of payment details
-          schema:
-            $ref: "#/definitions/PaymentDetailsListResponse"
 
   /payment/{id}:
 

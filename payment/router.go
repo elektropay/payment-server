@@ -91,7 +91,7 @@ var routes = Routes{
 	Route{
 		"PaymentsPost",
 		strings.ToUpper("Post"),
-		"/v1/payments",
-		HandlerPaymentsPost,
+		"/v1/payment",
+		HandlerPaymentPost,
 	},
 }
