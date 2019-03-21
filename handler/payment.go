@@ -2,9 +2,9 @@ package handler
 
 import (
 	"encoding/json"
+	"github.com/teivah/payment-server/swagger"
 	"net/http"
 
-	"github.com/teivah/payment-server/swagger"
 	"github.com/teivah/payment-server/utils"
 	"go.uber.org/zap"
 )
@@ -54,8 +54,6 @@ func decodeRequest(v interface{}, request *http.Request) error {
 	err := decoder.Decode(&v)
 	if err != nil {
 		utils.Logger.Error(
-
-
 			"Error while decoding request", zap.Error(err))
 		return err
 	}
