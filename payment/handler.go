@@ -6,6 +6,7 @@ import (
 	"github.com/teivah/payment-server/swagger"
 	"github.com/teivah/payment-server/utils"
 	"go.uber.org/zap"
+	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"io"
 	"net/http"
@@ -13,13 +14,13 @@ import (
 
 type Envelope struct {
 	Id      bson.ObjectId    `json:"id"        bson:"_id,omitempty"`
-	Payload *swagger.Payment `json:"title"`
+	Payment *swagger.Payment `json:"payment"`
 }
 
 const (
 	errorCodeBadRequest = "bad_request"
-	errorCodeDb         = "error_db"
-	errorMessageDb      = "Unable to persist user request."
+	errorCodeHandler    = "handler_error"
+	errorMessageHandler = "Unable to handle user request."
 )
 
 func HandlerPaymentIdDelete(w http.ResponseWriter, r *http.Request) {
@@ -28,8 +29,25 @@ func HandlerPaymentIdDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandlerPaymentIdGet(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	var envelope Envelope
+
+	parameters := mux.Vars(r)
+	id := parameters["id"]
+
+	err := mongoClient.FindId(bson.ObjectIdHex(id)).One(&envelope)
+	if err != nil {
+		if err == mgo.ErrNotFound {
+			formatErrorResponse(w, http.StatusNotFound, nil)
+		} else {
+			formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
+				ErrorCode:    errorCodeHandler,
+				ErrorMessage: errorMessageHandler,
+			})
+		}
+		return
+	}
+
+	formatPaymentWithIdResponse(w, id, externalApiUri, envelope.Payment)
 }
 
 func HandlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
@@ -44,15 +62,15 @@ func HandlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
 
 	err = mongoClient.UpdateId(bson.ObjectIdHex(id),
 		Envelope{
-			Payload: payment.Data,
+			Payment: payment.Data,
 		})
 	if err != nil {
 		utils.Logger.Error("Unable to update payment in Mongo.",
 			zap.String("paymentId", id),
 			zap.Error(err))
-		formatApiErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
-			ErrorCode:    errorCodeDb,
-			ErrorMessage: errorMessageDb,
+		formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
+			ErrorCode:    errorCodeHandler,
+			ErrorMessage: errorMessageHandler,
 		})
 		return
 	}
@@ -79,13 +97,13 @@ func HandlerPaymentPost(w http.ResponseWriter, r *http.Request) {
 	id := bson.NewObjectId()
 	err = mongoClient.Insert(Envelope{
 		Id:      id,
-		Payload: payment.Data,
+		Payment: payment.Data,
 	})
 	if err != nil {
 		utils.Logger.Error("Unable to create payment in Mongo.", zap.Error(err))
-		formatApiErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
-			ErrorCode:    errorCodeDb,
-			ErrorMessage: errorMessageDb,
+		formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
+			ErrorCode:    errorCodeHandler,
+			ErrorMessage: errorMessageHandler,
 		})
 		return
 	}
@@ -101,7 +119,7 @@ func decodeRequest(v interface{}, w http.ResponseWriter, r *http.Request) error 
 		utils.Logger.Warn(
 			"Error while decoding request", zap.Error(err))
 
-		formatApiErrorResponse(w, http.StatusBadRequest, &swagger.ApiError{
+		formatErrorResponse(w, http.StatusBadRequest, &swagger.ApiError{
 			ErrorCode:    errorCodeBadRequest,
 			ErrorMessage: err.Error(),
 		})
@@ -126,8 +144,12 @@ func formatPaymentWithIdResponse(w http.ResponseWriter, id, uri string, payment 
 	io.WriteString(w, string(b))
 }
 
-func formatApiErrorResponse(w http.ResponseWriter, statusCode int, apiError *swagger.ApiError) {
+func formatErrorResponse(w http.ResponseWriter, statusCode int, apiError *swagger.ApiError) {
 	w.WriteHeader(statusCode)
+
+	if apiError == nil {
+		return
+	}
 
 	b, err := json.Marshal(apiError)
 	if err != nil {
