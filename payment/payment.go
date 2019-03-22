@@ -15,6 +15,15 @@ func init() {
 }
 
 func paymentToPaymentWithId(id, uri string, payment *swagger.Payment) *swagger.PaymentWithId {
+	if payment == nil {
+		return &swagger.PaymentWithId{
+			Id: id,
+			Links: &swagger.Links{
+				Self: fmt.Sprintf("%s%s/%s", uri, paymentPrefix, id),
+			},
+		}
+	}
+
 	// To avoid having to copy the payment content, maybe composition would have been a better choice?
 	return &swagger.PaymentWithId{
 		Id:             id,

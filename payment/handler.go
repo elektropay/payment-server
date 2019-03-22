@@ -38,6 +38,9 @@ func HandlerPaymentIdGet(w http.ResponseWriter, r *http.Request) {
 	err := mongoClient.FindId(bson.ObjectIdHex(id)).One(&envelope)
 	if err != nil {
 		if err == mgo.ErrNotFound {
+			utils.Logger.Warn("Unable to update payment in Mongo: payment not found.",
+				zap.String("paymentId", id),
+				zap.Error(err))
 			formatErrorResponse(w, http.StatusNotFound, nil)
 		} else {
 			formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
@@ -65,14 +68,22 @@ func HandlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
 		Envelope{
 			Payment: payment.Data,
 		})
+
 	if err != nil {
-		utils.Logger.Error("Unable to update payment in Mongo.",
-			zap.String("paymentId", id),
-			zap.Error(err))
-		formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
-			ErrorCode:    errorCodeHandler,
-			ErrorMessage: errorMessageHandler,
-		})
+		if err == mgo.ErrNotFound {
+			utils.Logger.Warn("Unable to update payment in Mongo: payment not found.",
+				zap.String("paymentId", id),
+				zap.Error(err))
+			formatErrorResponse(w, http.StatusNotFound, nil)
+		} else {
+			utils.Logger.Error("Unable to update payment in Mongo.",
+				zap.String("paymentId", id),
+				zap.Error(err))
+			formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
+				ErrorCode:    errorCodeHandler,
+				ErrorMessage: errorMessageHandler,
+			})
+		}
 		return
 	}
 
