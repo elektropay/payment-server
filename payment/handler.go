@@ -2,6 +2,7 @@ package payment
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/teivah/payment-server/swagger"
 	"github.com/teivah/payment-server/utils"
@@ -9,6 +10,11 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"net/http"
 )
+
+type PaymentEnvelope struct {
+	Id      bson.ObjectId    `json:"id"        bson:"_id,omitempty"`
+	Payload *swagger.Payment `json:"title"`
+}
 
 const (
 	logPostError = "Unable to insert payment creation in Mongo."
@@ -39,8 +45,10 @@ func HandlerPaymentIdPut(w http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	mongoCollection.UpdateId(bson.ObjectIdHex(id), bson.M{"payload": payment.Data})
-
+	err = mongoClient.UpdateId(bson.ObjectIdHex(id),
+		PaymentEnvelope{
+			Payload: payment.Data,
+		})
 	if err != nil {
 		utils.Logger.Error(logPostError,
 			zap.String("paymentId", id),
@@ -55,6 +63,10 @@ func HandlerPaymentIdPut(w http.ResponseWriter, request *http.Request) {
 }
 
 func HandlerPaymentsGet(w http.ResponseWriter, request *http.Request) {
+	var payments []PaymentEnvelope
+	mongoClient.Find(nil).All(&payments)
+	fmt.Printf("%v\n", payments[0].Id.Hex())
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
@@ -67,7 +79,9 @@ func HandlerPaymentPost(w http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	err = mongoCollection.Insert(bson.M{"payload": payment.Data})
+	err = mongoClient.Insert(PaymentEnvelope{
+		Payload: payment.Data,
+	})
 	if err != nil {
 		utils.Logger.Error(logPostError,
 			zap.Error(err))

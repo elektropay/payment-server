@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-var mongoCollection *mgo.Collection
+var mongoClient *mgo.Collection
 
 func init() {
 	// TODO Handle wrong parameter
@@ -27,5 +27,5 @@ func init() {
 	}
 	// TODO Check timeout
 	conn.SetSocketTimeout(mongoRequestTimeout)
-	mongoCollection = conn.DB(databaseName).C(collectionName)
+	mongoClient = conn.DB(databaseName).C(collectionName)
 }
