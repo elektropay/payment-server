@@ -20,6 +20,10 @@ paths:
           description: List of payment details
           schema:
             $ref: "#/definitions/PaymentDetailsListResponse"
+        500:
+          description: List of payment error due to an internal server error
+          schema:
+            $ref: "#/definitions/ApiError"
 
   /payment:
     post:
@@ -39,9 +43,12 @@ paths:
           description: Payment creation response
           schema:
             $ref: "#/definitions/PaymentCreationResponse"
-
         400:
-          description: Payment creation error
+          description: Payment creation error due to an invalid request
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Payment creation error due to an internal server error
           schema:
             $ref: "#/definitions/ApiError"
 
@@ -70,7 +77,11 @@ paths:
           schema:
             $ref: "#/definitions/PaymentUpdateResponse"
         400:
-          description: Payment creation error
+          description: Payment update error due to an invalid request
+          schema:
+            $ref: "#/definitions/ApiError"
+        500:
+          description: Payment update error due to an internal server error
           schema:
             $ref: "#/definitions/ApiError"
 
@@ -90,6 +101,10 @@ paths:
           description: Payment details
           schema:
             $ref: "#/definitions/PaymentWithId"
+        500:
+          description: Payment details error due to an internal server error
+          schema:
+            $ref: "#/definitions/ApiError"
 
     delete:
       summary: Delete payment
@@ -108,6 +123,10 @@ paths:
       responses:
         204:
           description: Payment deleted
+        500:
+          description: Payment deletion error due to an internal server error
+          schema:
+            $ref: "#/definitions/ApiError"
 
 definitions:
 
