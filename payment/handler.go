@@ -2,6 +2,7 @@ package payment
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/teivah/payment-server/swagger"
 	"github.com/teivah/payment-server/utils"
@@ -80,11 +81,17 @@ func HandlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandlerPaymentsGet(w http.ResponseWriter, r *http.Request) {
-	var payments []Envelope
-	mongoClient.Find(nil).All(&payments)
+	var envelopes []Envelope
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	err := mongoClient.Find(nil).All(&envelopes)
+	if err != nil {
+		formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
+			ErrorCode:    errorCodeHandler,
+			ErrorMessage: errorMessageHandler,
+		})
+	}
+
+	formatPaymentsWithIdResponse(w, externalApiUri, envelopes)
 }
 
 func HandlerPaymentPost(w http.ResponseWriter, r *http.Request) {
@@ -137,7 +144,34 @@ func formatPaymentWithIdResponse(w http.ResponseWriter, id, uri string, payment 
 
 	b, err := json.Marshal(withId)
 	if err != nil {
-		utils.Logger.Error("Unable to format api error", zap.Error(err))
+		utils.Logger.Error("Unable to format payment response", zap.Error(err))
+		return
+	}
+
+	io.WriteString(w, string(b))
+}
+
+func formatPaymentsWithIdResponse(w http.ResponseWriter, uri string, envelopes []Envelope) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	len := len(envelopes)
+	withIds := make([]swagger.PaymentWithId, len)
+	for i := 0; i < len; i++ {
+		envelope := envelopes[i]
+		withIds[i] = *paymentToPaymentWithId(envelope.Id.Hex(), uri, envelope.Payment)
+	}
+
+	response := swagger.PaymentDetailsListResponse{
+		Data: withIds,
+		Links: &swagger.Links{
+			Self: fmt.Sprintf("%s%s", uri, paymentsPrefix),
+		},
+	}
+
+	b, err := json.Marshal(response)
+	if err != nil {
+		utils.Logger.Error("Unable to format payments", zap.Error(err))
 		return
 	}
 
