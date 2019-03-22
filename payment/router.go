@@ -20,6 +20,10 @@ type Route struct {
 
 type Routes []Route
 
+const paymentApiVersion = "/v1/"
+const paymentPrefix = paymentApiVersion + "payment"
+const paymentsPrefix = paymentApiVersion + "payments"
+
 func logger(inner http.Handler, name string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
@@ -56,42 +60,42 @@ var routes = Routes{
 	Route{
 		"Index",
 		"GET",
-		"/v1/",
+		paymentApiVersion,
 		Index,
 	},
 
 	Route{
 		"PaymentIdDelete",
 		strings.ToUpper("Delete"),
-		"/v1/payment/{id}",
+		paymentPrefix + "/{id}",
 		HandlerPaymentIdDelete,
 	},
 
 	Route{
 		"PaymentIdGet",
 		strings.ToUpper("Get"),
-		"/v1/payment/{id}",
+		paymentPrefix + "/{id}",
 		HandlerPaymentIdGet,
 	},
 
 	Route{
 		"PaymentIdPut",
 		strings.ToUpper("Put"),
-		"/v1/payment/{id}",
+		paymentPrefix + "/{id}",
 		HandlerPaymentIdPut,
 	},
 
 	Route{
 		"PaymentsGet",
 		strings.ToUpper("Get"),
-		"/v1/payments",
+		paymentsPrefix,
 		HandlerPaymentsGet,
 	},
 
 	Route{
 		"PaymentsPost",
 		strings.ToUpper("Post"),
-		"/v1/payment",
+		paymentPrefix,
 		HandlerPaymentPost,
 	},
 }

@@ -9,7 +9,7 @@ require (
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.3.2
-	github.com/stretchr/testify v1.3.0 // indirect
+	github.com/stretchr/testify v1.3.0
 	github.com/tidwall/pretty v0.0.0-20180105212114-65a9db5fad51 // indirect
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
 	github.com/xdg/stringprep v1.0.0 // indirect

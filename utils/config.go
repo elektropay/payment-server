@@ -12,6 +12,8 @@ func config() {
 	// General
 	flag.String("logging.level", "info", "Log level")
 	flag.Int("server.port", 8080, "Server port")
+	flag.Int("server.external.port", 8080, "External server port")
+	flag.String("server.external.hostname", "localhost", "External server hostname")
 
 	// MongoDB
 	flag.String("mongo.uri", "mongodb://localhost:27017", "Mongo URI")
