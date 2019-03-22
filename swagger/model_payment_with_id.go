@@ -9,7 +9,7 @@
 
 package swagger
 
-type Payment struct {
+type PaymentWithId struct {
 
 	// Name of the resource type
 	Type_ string `json:"type,omitempty"`
@@ -23,4 +23,9 @@ type Payment struct {
 	Attributes *PaymentAttributes `json:"attributes"`
 
 	Relationships *PaymentRelationships `json:"relationships,omitempty"`
+
+	// Unique resource ID
+	Id string `json:"id,omitempty"`
+
+	Links *Links `json:"links,omitempty"`
 }

@@ -2,6 +2,7 @@ package payment
 
 import (
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"github.com/teivah/payment-server/swagger"
 	"github.com/teivah/payment-server/utils"
 	"go.uber.org/zap"
@@ -28,6 +29,9 @@ func HandlerPaymentIdGet(w http.ResponseWriter, request *http.Request) {
 }
 
 func HandlerPaymentIdPut(w http.ResponseWriter, request *http.Request) {
+	parameters := mux.Vars(request)
+	id := parameters["id"]
+
 	var payment swagger.PaymentUpdate
 	err := decodeRequest(&payment, request)
 	if err != nil {
@@ -35,11 +39,11 @@ func HandlerPaymentIdPut(w http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	mongoCollection.UpdateId(bson.ObjectIdHex(payment.Data.Id), bson.M{"payload": payment.Data})
+	mongoCollection.UpdateId(bson.ObjectIdHex(id), bson.M{"payload": payment.Data})
 
 	if err != nil {
 		utils.Logger.Error(logPostError,
-			zap.String("paymentId", payment.Data.Id),
+			zap.String("paymentId", id),
 			zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write(responsePostError)
@@ -66,7 +70,6 @@ func HandlerPaymentPost(w http.ResponseWriter, request *http.Request) {
 	err = mongoCollection.Insert(bson.M{"payload": payment.Data})
 	if err != nil {
 		utils.Logger.Error(logPostError,
-			zap.String("paymentId", payment.Data.Id),
 			zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write(responsePostError)

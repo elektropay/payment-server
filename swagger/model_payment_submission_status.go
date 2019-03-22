@@ -13,14 +13,14 @@ type PaymentSubmissionStatus string
 
 // List of PaymentSubmissionStatus
 const (
-	ACCEPTED            PaymentSubmissionStatus = "accepted"
-	LIMIT_CHECK_PENDING PaymentSubmissionStatus = "limit_check_pending"
-	LIMIT_CHECK_FAILED  PaymentSubmissionStatus = "limit_check_failed"
-	LIMIT_CHECK_PASSED  PaymentSubmissionStatus = "limit_check_passed"
-	RELEASED_TO_GATEWAY PaymentSubmissionStatus = "released_to_gateway"
-	QUEUED_FOR_DELIVERY PaymentSubmissionStatus = "queued_for_delivery"
-	DELIVERY_CONFIRMED  PaymentSubmissionStatus = "delivery_confirmed"
-	DELIVERY_FAILED     PaymentSubmissionStatus = "delivery_failed"
-	SUBMITTED           PaymentSubmissionStatus = "submitted"
-	VALIDATION_PENDING  PaymentSubmissionStatus = "validation_pending"
+	PAYMENT_SUBMISSION_STATUS_ACCEPTED            PaymentSubmissionStatus = "accepted"
+	PAYMENT_SUBMISSION_STATUS_LIMIT_CHECK_PENDING PaymentSubmissionStatus = "limit_check_pending"
+	PAYMENT_SUBMISSION_STATUS_LIMIT_CHECK_FAILED  PaymentSubmissionStatus = "limit_check_failed"
+	PAYMENT_SUBMISSION_STATUS_LIMIT_CHECK_PASSED  PaymentSubmissionStatus = "limit_check_passed"
+	PAYMENT_SUBMISSION_STATUS_RELEASED_TO_GATEWAY PaymentSubmissionStatus = "released_to_gateway"
+	PAYMENT_SUBMISSION_STATUS_QUEUED_FOR_DELIVERY PaymentSubmissionStatus = "queued_for_delivery"
+	PAYMENT_SUBMISSION_STATUS_DELIVERY_CONFIRMED  PaymentSubmissionStatus = "delivery_confirmed"
+	PAYMENT_SUBMISSION_STATUS_DELIVERY_FAILED     PaymentSubmissionStatus = "delivery_failed"
+	PAYMENT_SUBMISSION_STATUS_SUBMITTED           PaymentSubmissionStatus = "submitted"
+	PAYMENT_SUBMISSION_STATUS_VALIDATION_PENDING  PaymentSubmissionStatus = "validation_pending"
 )

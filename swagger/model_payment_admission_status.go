@@ -13,6 +13,6 @@ type PaymentAdmissionStatus string
 
 // List of PaymentAdmissionStatus
 const (
-	PAYMENT_ADMISSION_STATUS_CONFIRMED PaymentAdmissionStatus = "confirmed"
-	PAYMENT_ADMISSION_STATUS_FAILED    PaymentAdmissionStatus = "failed"
+	CONFIRMED PaymentAdmissionStatus = "confirmed"
+	FAILED    PaymentAdmissionStatus = "failed"
 )

@@ -8,7 +8,6 @@ schemes:
 basePath: /v1
 paths:
   /payments:
-
     get:
       summary: List payments
       tags:
@@ -35,7 +34,6 @@ paths:
           in: body
           schema:
             $ref: "#/definitions/PaymentCreation"
-
       responses:
         201:
           description: Payment creation response
@@ -48,7 +46,6 @@ paths:
             $ref: "#/definitions/ApiError"
 
   /payment/{id}:
-
     put:
       summary: Update payment
       tags:
@@ -67,13 +64,11 @@ paths:
           in: body
           schema:
             $ref: "#/definitions/PaymentUpdate"
-
       responses:
         201:
           description: Payment update response
           schema:
             $ref: "#/definitions/PaymentUpdateResponse"
-
         400:
           description: Payment creation error
           schema:
@@ -94,7 +89,7 @@ paths:
         200:
           description: Payment details
           schema:
-            $ref: "#/definitions/Payment"
+            $ref: "#/definitions/PaymentWithId"
 
     delete:
       summary: Delete payment
@@ -112,7 +107,7 @@ paths:
           format: uuid
       responses:
         204:
-          description: Organisation deleted
+          description: Payment deleted
 
 definitions:
 
@@ -130,529 +125,27 @@ definitions:
     properties:
       self:
         type: string
-      first:
-        type: string
-      prev:
-        type: string
-      next:
-        type: string
-      last:
-        type: string
 
-  Self:
-    type: object
-    properties:
-      self:
-        type: string
-
-  RecordCount:
-    type: object
-    properties:
-      count:
-        type: integer
-
-  #Ace
-  Ace:
-    type: object
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        type: object
+  PaymentWithId:
+    allOf:
+      - $ref: '#/definitions/Payment'
+      - type: object
+        required:
+          - rootCause
         properties:
-          role_id:
+          id:
             type: string
             format: uuid
-          action:
-            type: string
-            pattern: ^[A-Za-z]*$
-          record_type:
-            type: string
-            pattern: ^[A-Za-z]*$
-          filter:
-            type: string
-
-  SubscriptionAttributes:
-    type: object
-    properties:
-      callback_uri:
-        type: string
-        pattern: ^[A-Za-z0-9 .,@:\/-_]*$
-      callback_transport:
-        type: string
-        enum:
-          - http
-          - email
-          - queue
-      user_id:
-        type: string
-        format: uuid
-        readOnly: true
-      record_type:
-        type: string
-        pattern: ^[A-Za-z_-]*$
-      event_type:
-        type: string
-        pattern: ^[A-Za-z_-]*$
-
-  #Organisation records
-  #===
-  #These reflect Form³, customers on the platform, and their subentities
-  Organisation:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        $ref: "#/definitions/OrganisationAttributes"
-
-  OrganisationAttributes:
-    type: object
-    properties:
-      name:
-        type: string
-
-  User:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        type: object
-        properties:
-          username:
-            type: string
-            pattern: ^[A-Za-z0-9-+@.]*$
-          email:
-            type: string
-            pattern: ^[A-Za-z0-9-+@.]*$
-          role_ids:
-            type: array
-            items:
-              type: string
-              format: uuid
-
-  #Roles
-  Role:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        $ref: "#/definitions/RoleAttributes"
-
-  RoleAttributes:
-    type: object
-    properties:
-      name:
-        type: string
-
-  #Credential
-  Credential:
-    type: object
-    properties:
-      client_id:
-        type: string
-        format: uuid
-
-  CredentialSecret:
-    type: object
-    properties:
-      client_id:
-        type: string
-        format: uuid
-      client_secret:
-        type: string
-
-  Subscription:
-    type: object
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        $ref: "#/definitions/SubscriptionAttributes"
-
-  Association:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        $ref: "#/definitions/AssociationAttributes"
-
-  NewAssociation:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        $ref: "#/definitions/NewAssociationAttributes"
-
-  NewAssociationAttributes:
-    type: object
-    properties:
-      starling_account_name:
-        type: string
-
-  AssociationAttributes:
-    type: object
-    properties:
-      starling_account_uid:
-        type: string
-        format: uuid
-      starling_account_name:
-        type: string
-
-  PayportAssociation:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        $ref: "#/definitions/PayportAssociationAttributes"
-
-  PayportAssociationAttributes:
-    type: object
-    properties:
-      participant_id:
-        type: string
-      participant_type:
-        $ref: '#/definitions/PayportParticipantType'
-      customer_sending_fps_institution:
-        type: string
-      sponsor_bank_id:
-        type: string
-      sponsor_account_number:
-        type: string
-
-  PayportParticipantType:
-    type: string
-    enum:
-      - settling
-      - non_settling
-
-  BacsAssociation:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        $ref: "#/definitions/BacsAssociationAttributes"
-      relationships:
-        $ref: "#/definitions/BacsAssociationRelationships"
-
-  BacsNewAssociation:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        $ref: "#/definitions/BacsAssociationAttributes"
-      relationships:
-        $ref: "#/definitions/BacsAssociationRelationships"
-
-  BacsAssociationAttributes:
-    type: object
-    properties:
-      service_user_number:
-        type: string
-        pattern: ^[0-9A-Z]{6}$
-      account_number:
-        type: string
-        pattern: ^[0-9]{8}$
-      sorting_code:
-        type: string
-        pattern: ^[0-9]{6}$
-      account_type:
-        type: integer
-        x-nullable: true
-      bank_code:
-        type: string
-        pattern: ^[0-9A-Z]{4}$
-      centre_number:
-        type: string
-        pattern: ^[0-9A-Z]{2}$
-
-  BacsAssociationRelationships:
-    type: object
-    properties:
-      input_certificate:
-        $ref: "#/definitions/BacsAssociationCertificateRelationship"
-      output_certificate:
-        $ref: "#/definitions/BacsAssociationCertificateRelationship"
-      messaging_certificate:
-        $ref: "#/definitions/BacsAssociationCertificateRelationship"
-
-  BacsAssociationCertificateRelationship:
-    type: object
-    properties:
-      data:
-        type: object
-        properties:
-          type:
-            type: string
-          key_id:
-            type: string
-            format: uuid
-          certificate_id:
-            type: string
-            format: uuid
-
-  VocalinkReportAssociation:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        $ref: "#/definitions/VocalinkReportAssociationAttributes"
-      relationships:
-        $ref: "#/definitions/VocalinkReportAssociationRelationships"
-
-  NewVocalinkReportAssociation:
-    type: object
-    required:
-      - id
-      - organisation_id
-      - relationships
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        $ref: "#/definitions/VocalinkReportAssociationAttributes"
-      relationships:
-        $ref: "#/definitions/VocalinkReportAssociationRelationships"
-
-  VocalinkReportAssociationRelationships:
-    type: object
-    properties:
-      bacs_member_certificate:
-        $ref: "#/definitions/VocalinkReportAssociationCertificateRelationship"
-      bacs_service_user_certificate:
-        $ref: "#/definitions/VocalinkReportAssociationCertificateRelationship"
-      fps_member_certificate:
-        $ref: "#/definitions/VocalinkReportAssociationCertificateRelationship"
-
-  VocalinkReportAssociationCertificateRelationship:
-    type: object
-    properties:
-      data:
-        type: object
-        properties:
-          type:
-            type: string
-          key_id:
-            type: string
-            format: uuid
-          certificate_id:
-            type: string
-            format: uuid
-
-  VocalinkReportAssociationAttributes:
-    type: object
-    properties:
-      bacs_service_user_number:
-        type: string
-
-  SepaInstantAssociation:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        $ref: "#/definitions/SepaInstantAssociationAttributes"
-
-  NewSepaInstantAssociation:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        $ref: "#/definitions/SepaInstantAssociationAttributes"
-
-  SepaInstantAssociationAttributes:
-    type: object
-    properties:
-      business_user_dn:
-        type: string
-      transport_profile_id:
-        type: string
-      bic:
-        type: string
-
-  SepaSctAssociation:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        $ref: "#/definitions/SepaSctAssociationAttributes"
-
-  NewSepaSctAssociation:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        $ref: "#/definitions/SepaSctAssociationAttributes"
-
-  SepaSctAssociationAttributes:
-    type: object
-    properties:
-      bic:
-        type: string
+            example: "7826c3cb-d6fd-41d0-b187-dc23ba928772"
+            description: "Unique resource ID"
+          links:
+            $ref: '#/definitions/Links'
 
   Payment:
     type: object
     x-access:
       - Public
     required:
-      - id
       - organisation_id
       - attributes
     properties:
@@ -661,11 +154,6 @@ definitions:
         description: "Name of the resource type"
         example: "payments"
         pattern: ^[A-Za-z_]*$
-      id:
-        type: string
-        format: uuid
-        example: "7826c3cb-d6fd-41d0-b187-dc23ba928772"
-        description: "Unique resource ID"
       version:
         type: integer
         description: "Version number"
@@ -1623,6 +1111,7 @@ definitions:
       relationships:
         $ref: '#/definitions/PaymentRelationships'
 
+
   PaymentRelationships:
     type: object
     x-access:
@@ -1985,74 +1474,6 @@ definitions:
             swift: "sometimes"
         example: "//AT12345"
 
-  AccountHoldingEntity:
-    x-access:
-      - Public
-    type: object
-    properties:
-      bank_address:
-        x-omitempty: true
-        type: array
-        description: Financial institution address
-        x-description:
-          swift: Field 57B
-        x-availability:
-          post:
-            swift: "optional"
-          get:
-            swift: "sometimes"
-        example: [
-          "Liverpool Customer Service Centre",
-          "Stevenson Way",
-          "Wavertree",
-          "L13 1NW"
-        ]
-        items:
-          type: string
-      bank_id:
-        description: "Financial institution identification"
-        x-description:
-          bacs: "Field1"
-          sepa: "Must be a BIC"
-          swift: "Field 57A: BIC Component (11)"
-        x-availability:
-          post:
-            fps: "required"
-            bacs: "required"
-            swift: "required"
-            sepa: "required"
-          get:
-            fps: "always"
-            bacs: "always"
-            swift: "always"
-            sepa: "always"
-        example: "333333"
-        type: string
-      bank_id_code:
-        $ref: '#/definitions/BankIdCode'
-      bank_name:
-        type: string
-        description: "Financial institution name"
-        x-description:
-          swift: "Field 57D"
-        x-availability:
-          post:
-            swift: "optional"
-          get:
-            swift: "sometimes"
-        example: "NATIONAL WESTMINSTER BANK PLC"
-      bank_party_id:
-        type: string
-        description: "Identifier of the financial institution which services the account"
-        x-description:
-          swift: "Field 57A/57B/57D"
-        x-availability:
-          post:
-            swift: "optional"
-          get:
-            swift: "sometimes"
-        example: "//AT12345"
-
   AccountNumberCode:
     type: string
     enum:
@@ -2176,59 +1597,6 @@ definitions:
           reversal_admission:
             $ref: '#/definitions/RelationshipLinks'
 
-  ReversalReturn:
-    type: object
-    required:
-      - id
-      - organisation_id
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z_]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        type: object
-      relationships:
-        type: object
-        properties:
-          payment_return:
-            $ref: '#/definitions/RelationshipLinks'
-          return_reversal_admission:
-            $ref: '#/definitions/RelationshipLinks'
-
-  NewPaymentSubmission:
-    type: object
-    required:
-      - id
-      - organisation_id
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z_]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      relationships:
-        type: object
-        properties:
-          validations:
-            $ref: '#/definitions/RelationshipLinks'
-
-
   PaymentSubmission:
     type: object
     required:
@@ -2336,332 +1704,6 @@ definitions:
           payment:
             $ref: '#/definitions/RelationshipLinks'
 
-  NewPaymentAdmission:
-    type: object
-    required:
-      - id
-      - organisation_id
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z_]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        type: object
-        properties:
-          scheme_status_code:
-            type: string
-          admission_datetime:
-            type: string
-            format: 'date-time'
-            readOnly: true
-          settlement_date:
-            type: string
-            format: 'date'
-          settlement_cycle:
-            type: integer
-            minimum: 0
-          source_gateway:
-            type: string
-
-  NewReturnSubmission:
-    type: object
-    required:
-      - id
-      - organisation_id
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z_]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      relationships:
-        $ref: '#/definitions/ReturnSubmissionRelationships'
-
-  ReturnSubmission:
-    type: object
-    required:
-      - id
-      - organisation_id
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z_]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        type: object
-        properties:
-          scheme_status_code:
-            type: string
-          status_reason:
-            type: string
-          submission_datetime:
-            type: string
-            format: 'date-time'
-            readOnly: true
-          settlement_date:
-            type: string
-            format: 'date'
-          settlement_cycle:
-            type: integer
-            minimum: 0
-          status:
-            $ref: '#/definitions/ReturnSubmissionStatus'
-          redirected_bank_id:
-            type: string
-          redirected_account_number:
-            type: string
-          limit_breach_start_datetime:
-            type: string
-            format: 'date-time'
-            readOnly: true
-          limit_breach_end_datetime:
-            type: string
-            format: 'date-time'
-            readOnly: true
-          transaction_start_datetime:
-            type: string
-            format: 'date-time'
-            readOnly: true
-      relationships:
-        $ref: '#/definitions/ReturnSubmissionRelationships'
-
-  ReturnSubmissionRelationships:
-    type: object
-    properties:
-      payment_return:
-        $ref: '#/definitions/RelationshipLinks'
-      validations:
-        $ref: '#/definitions/RelationshipLinks'
-
-  ReturnAdmission:
-    type: object
-    required:
-      - id
-      - organisation_id
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z_]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        type: object
-        properties:
-          scheme_status_code:
-            type: string
-          status_reason:
-            type: string
-          admission_datetime:
-            type: string
-            format: 'date-time'
-            readOnly: true
-          settlement_date:
-            type: string
-            format: 'date'
-          settlement_cycle:
-            type: integer
-            minimum: 0
-          status:
-            $ref: '#/definitions/ReturnAdmissionStatus'
-      relationships:
-        $ref: '#/definitions/ReturnAdmissionRelationships'
-
-  ReturnAdmissionRelationships:
-    type: object
-    properties:
-      payment_return:
-        $ref: '#/definitions/RelationshipLinks'
-      validations:
-        $ref: '#/definitions/RelationshipLinks'
-
-  NewReturnAdmission:
-    type: object
-    required:
-      - id
-      - organisation_id
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z_]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        type: object
-        properties:
-          scheme_status_code:
-            type: string
-          status_reason:
-            type: string
-          settlement_date:
-            type: string
-            format: 'date'
-          settlement_cycle:
-            type: integer
-            minimum: 0
-          source_gateway:
-            type: string
-      relationships:
-        type: object
-        properties:
-          validations:
-            $ref: '#/definitions/RelationshipLinks'
-
-  ReversalAdmission:
-    type: object
-    required:
-      - id
-      - organisation_id
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z_]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        type: object
-        properties:
-          scheme_status_code:
-            type: string
-          source_gateway:
-            type: string
-      relationships:
-        type: object
-        properties:
-          reversal:
-            $ref: '#/definitions/RelationshipLinks'
-
-  ReturnReversalAdmission:
-    type: object
-    required:
-      - id
-      - organisation_id
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z_]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        type: object
-        properties:
-          source_gateway:
-            type: string
-          scheme_status_code:
-            type: string
-      relationships:
-        type: object
-        properties:
-          payment_return_reversal:
-            $ref: '#/definitions/RelationshipLinks'
-
-  PaymentSubmissionValidation:
-    type: object
-    required:
-      - id
-      - organisation_id
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z_]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        type: object
-        properties:
-          source:
-            $ref: '#/definitions/ValidationSource'
-          status:
-            $ref: '#/definitions/ValidationStatus'
-          response:
-            type: string
-
-  ReturnSubmissionValidation:
-    type: object
-    required:
-      - id
-      - organisation_id
-    properties:
-      type:
-        type: string
-        pattern: ^[A-Za-z_]*$
-      id:
-        type: string
-        format: uuid
-      version:
-        type: integer
-        minimum: 0
-      organisation_id:
-        type: string
-        format: uuid
-      attributes:
-        type: object
-        properties:
-          source:
-            $ref: '#/definitions/ValidationSource'
-          status:
-            $ref: '#/definitions/ValidationStatus'
-          response:
-            type: string
-
   PaymentUpdate:
     type: object
     properties:
@@ -2674,101 +1716,17 @@ definitions:
       data:
         $ref: '#/definitions/Payment'
 
-  ReturnCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReturnPayment'
-
-  ReversalCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReversalPayment'
-
-  ReturnReversalCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReversalReturn'
-
-  PaymentAdmissionCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/NewPaymentAdmission'
-
-  PaymentSubmissionCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/NewPaymentSubmission'
-
-  ReturnSubmissionCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/NewReturnSubmission'
-
-  ReturnAdmissionCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/NewReturnAdmission'
-
-  ReversalAdmissionCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReversalAdmission'
-
-  ReturnReversalAdmissionCreation:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReturnReversalAdmission'
-
-  PaymentAmendment:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Payment'
-
-  PaymentSubmissionAmendment:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/PaymentSubmission'
-
-  ReturnSubmissionAmendment:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/ReturnSubmission'
-
   PaymentUpdateResponse:
     type: object
     properties:
       data:
-        $ref: '#/definitions/Payment'
-      links:
-        $ref: '#/definitions/Links'
+        $ref: '#/definitions/PaymentWithId'
 
   PaymentCreationResponse:
     type: object
     properties:
       data:
-        $ref: '#/definitions/Payment'
-      links:
-        $ref: '#/definitions/Links'
-
-  PaymentDetailsResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Payment'
-      links:
-        $ref: '#/definitions/Links'
+        $ref: '#/definitions/PaymentWithId'
 
   PaymentDetailsListResponse:
     type: object
@@ -2776,7 +1734,7 @@ definitions:
       data:
         type: array
         items:
-          $ref: '#/definitions/Payment'
+          $ref: '#/definitions/PaymentWithId'
       links:
         $ref: '#/definitions/Links'
 
@@ -2826,40 +1784,6 @@ definitions:
       - submitted
       - validation_pending
 
-  ReturnSubmissionStatus:
-    type: string
-    enum:
-      - accepted
-      - limit_check_pending
-      - limit_check_failed
-      - limit_check_passed
-      - released_to_gateway
-      - delivery_confirmed
-      - delivery_failed
-      - submitted
-      - validation_pending
-
-  ReturnAdmissionStatus:
-    type: string
-    enum:
-      - confirmed
-      - failed
-
-  ValidationStatus:
-    type: string
-    enum:
-      - failed
-      - passed
-      - not_accepted
-
-  ValidationSource:
-    type: string
-    enum:
-      - payment_api
-      - payport_interface
-      - starling_gateway
-      - bacs_gateway
-
   ChargesInformation:
     type: object
     properties:
@@ -2878,25 +1802,3 @@ definitions:
               type: string
             currency:
               type: string
-
-  SettlementCycle:
-    type: object
-    required:
-      - id
-      - attributes
-    properties:
-      id:
-        type: string
-        format: uuid
-      attributes:
-        type: object
-        properties:
-          gateway:
-            type: string
-            pattern: ^[A-Za-z_\-]*$
-          settlement_cycle_type:
-            type: string
-            pattern: ^[A-Za-z_\-]*$
-          settlement_cycle_number:
-            type: integer
-            minimum: 1
