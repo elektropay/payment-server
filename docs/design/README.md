@@ -1,4 +1,4 @@
-# Payment Server
+# Payment Server Design
 
 ## Persistence
 
@@ -20,7 +20,7 @@ The application provides only an HTTP endpoint as in modern architectures, it's 
 
 The TLS termination can be done by a load-balancer or by a service mesh deployed as a sidecar. 
 
-## Criticism
+## Criticism
 
 In the real world, I would maybe not create a direct coupling between the server and the database itself.
 
