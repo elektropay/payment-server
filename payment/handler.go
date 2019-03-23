@@ -2,6 +2,7 @@ package payment
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/teivah/payment-server/swagger"
@@ -28,7 +29,19 @@ func HandlerPaymentIdDelete(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 	id := parameters["id"]
 
-	err := mongoClient.RemoveId(bson.ObjectIdHex(id))
+	hex, err := mapIdToHex(id)
+	if err != nil {
+		utils.Logger.Warn(
+			"Error while decoding id", zap.Error(err))
+
+		formatErrorResponse(w, http.StatusBadRequest, &swagger.ApiError{
+			ErrorCode:    errorCodeBadRequest,
+			ErrorMessage: err.Error(),
+		})
+		return
+	}
+
+	err = mongoClient.RemoveId(hex)
 	if err != nil {
 		if err == mgo.ErrNotFound {
 			utils.Logger.Warn("Unable to delete payment in Mongo: payment not found.",
@@ -54,7 +67,19 @@ func HandlerPaymentIdGet(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 	id := parameters["id"]
 
-	err := mongoClient.FindId(bson.ObjectIdHex(id)).One(&envelope)
+	hex, err := mapIdToHex(id)
+	if err != nil {
+		utils.Logger.Warn(
+			"Error while decoding id", zap.Error(err))
+
+		formatErrorResponse(w, http.StatusBadRequest, &swagger.ApiError{
+			ErrorCode:    errorCodeBadRequest,
+			ErrorMessage: err.Error(),
+		})
+		return
+	}
+
+	err = mongoClient.FindId(hex).One(&envelope)
 	if err != nil {
 		if err == mgo.ErrNotFound {
 			utils.Logger.Warn("Unable to update payment in Mongo: payment not found.",
@@ -86,8 +111,19 @@ func HandlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
 
 	parameters := mux.Vars(r)
 	id := parameters["id"]
+	hex, err := mapIdToHex(id)
+	if err != nil {
+		utils.Logger.Warn(
+			"Error while decoding id", zap.Error(err))
 
-	err = mongoClient.UpdateId(bson.ObjectIdHex(id),
+		formatErrorResponse(w, http.StatusBadRequest, &swagger.ApiError{
+			ErrorCode:    errorCodeBadRequest,
+			ErrorMessage: err.Error(),
+		})
+		return
+	}
+
+	err = mongoClient.UpdateId(hex,
 		Envelope{
 			Payment: payment.Data,
 		})
@@ -239,4 +275,15 @@ func formatErrorResponse(w http.ResponseWriter, statusCode int, apiError *swagge
 	}
 
 	io.WriteString(w, string(b))
+}
+
+func mapIdToHex(id string) (hex bson.ObjectId, err error) {
+	// bson.ObjectIdHex panics if the id is invalid
+	// We need to recover from this panic and returns a proper error
+	defer func() {
+		if r := recover(); r != nil {
+			err = errors.New("invalid id")
+		}
+	}()
+	return bson.ObjectIdHex(id), nil
 }

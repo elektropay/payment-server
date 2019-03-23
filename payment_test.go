@@ -106,6 +106,16 @@ var _ = Describe("Payment", func() {
 			Expect(s).Should(Equal(http.StatusNotFound))
 		})
 	})
+
+	Context("when getting a payment with an invalid id", func() {
+		s, _, err := getPayment("x", host, paymentPath)
+		if err != nil {
+			Fail("Server error:" + err.Error())
+		}
+		It("has a 400 response status code", func() {
+			Expect(s).Should(Equal(http.StatusBadRequest))
+		})
+	})
 })
 
 func startServer() string {
