@@ -80,6 +80,8 @@ paths:
           description: Payment update error due to an invalid request
           schema:
             $ref: "#/definitions/ApiError"
+        404:
+          description: Payment not found
         500:
           description: Payment update error due to an internal server error
           schema:
@@ -101,6 +103,8 @@ paths:
           description: Payment details
           schema:
             $ref: "#/definitions/PaymentWithId"
+        404:
+          description: Payment not found
         500:
           description: Payment details error due to an internal server error
           schema:
@@ -123,6 +127,8 @@ paths:
       responses:
         204:
           description: Payment deleted
+        404:
+          description: Payment not found
         500:
           description: Payment deletion error due to an internal server error
           schema:

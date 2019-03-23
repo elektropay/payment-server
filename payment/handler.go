@@ -25,8 +25,27 @@ const (
 )
 
 func HandlerPaymentIdDelete(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	parameters := mux.Vars(r)
+	id := parameters["id"]
+
+	err := mongoClient.RemoveId(bson.ObjectIdHex(id))
+	if err != nil {
+		if err == mgo.ErrNotFound {
+			utils.Logger.Warn("Unable to delete payment in Mongo: payment not found.",
+				zap.String("paymentId", id),
+				zap.Error(err))
+			formatErrorResponse(w, http.StatusNotFound, nil)
+			return
+		}
+
+		formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
+			ErrorCode:    errorCodeHandler,
+			ErrorMessage: errorMessageHandler,
+		})
+		return
+	}
+
+	formatPaymentWithIdResponse(w, http.StatusNoContent, id, externalApiUri, nil)
 }
 
 func HandlerPaymentIdGet(w http.ResponseWriter, r *http.Request) {
@@ -42,16 +61,17 @@ func HandlerPaymentIdGet(w http.ResponseWriter, r *http.Request) {
 				zap.String("paymentId", id),
 				zap.Error(err))
 			formatErrorResponse(w, http.StatusNotFound, nil)
-		} else {
-			formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
-				ErrorCode:    errorCodeHandler,
-				ErrorMessage: errorMessageHandler,
-			})
+			return
 		}
+
+		formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
+			ErrorCode:    errorCodeHandler,
+			ErrorMessage: errorMessageHandler,
+		})
 		return
 	}
 
-	formatPaymentWithIdResponse(w, id, externalApiUri, envelope.Payment)
+	formatPaymentWithIdResponse(w, http.StatusOK, id, externalApiUri, envelope.Payment)
 }
 
 func HandlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
@@ -75,20 +95,19 @@ func HandlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
 				zap.String("paymentId", id),
 				zap.Error(err))
 			formatErrorResponse(w, http.StatusNotFound, nil)
-		} else {
-			utils.Logger.Error("Unable to update payment in Mongo.",
-				zap.String("paymentId", id),
-				zap.Error(err))
-			formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
-				ErrorCode:    errorCodeHandler,
-				ErrorMessage: errorMessageHandler,
-			})
 		}
+
+		utils.Logger.Error("Unable to update payment in Mongo.",
+			zap.String("paymentId", id),
+			zap.Error(err))
+		formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
+			ErrorCode:    errorCodeHandler,
+			ErrorMessage: errorMessageHandler,
+		})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	formatPaymentWithIdResponse(w, http.StatusCreated, id, externalApiUri, payment.Data)
 }
 
 func HandlerPaymentsGet(w http.ResponseWriter, r *http.Request) {
@@ -102,7 +121,7 @@ func HandlerPaymentsGet(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	formatPaymentsWithIdResponse(w, externalApiUri, envelopes)
+	formatPaymentsWithIdResponse(w, http.StatusOK, externalApiUri, envelopes)
 }
 
 func HandlerPaymentPost(w http.ResponseWriter, r *http.Request) {
@@ -126,7 +145,7 @@ func HandlerPaymentPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	formatPaymentWithIdResponse(w, id.Hex(), externalApiUri, payment.Data)
+	formatPaymentWithIdResponse(w, http.StatusCreated, id.Hex(), externalApiUri, payment.Data)
 }
 
 func decodeRequest(v interface{}, w http.ResponseWriter, r *http.Request) error {
@@ -147,9 +166,9 @@ func decodeRequest(v interface{}, w http.ResponseWriter, r *http.Request) error 
 	return nil
 }
 
-func formatPaymentWithIdResponse(w http.ResponseWriter, id, uri string, payment *swagger.Payment) {
+func formatPaymentWithIdResponse(w http.ResponseWriter, status int, id, uri string, payment *swagger.Payment) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(status)
 
 	withId := paymentToPaymentWithId(id, uri, payment)
 
@@ -162,9 +181,9 @@ func formatPaymentWithIdResponse(w http.ResponseWriter, id, uri string, payment 
 	io.WriteString(w, string(b))
 }
 
-func formatPaymentsWithIdResponse(w http.ResponseWriter, uri string, envelopes []Envelope) {
+func formatPaymentsWithIdResponse(w http.ResponseWriter, status int, uri string, envelopes []Envelope) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(status)
 
 	len := len(envelopes)
 	withIds := make([]swagger.PaymentWithId, len)
