@@ -1,4 +1,4 @@
-# Design
+# Payment Server
 
 ## Persistence
 
