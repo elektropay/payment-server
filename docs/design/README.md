@@ -10,13 +10,13 @@ If I had requirements regarding how the database would be used in the future (tr
 
 The Mongo client ([db.go](/payment/db.go)) belongs to the `payment` package. This might be subject to discussions (compared to having it in a dedicated `mongo` or `db` package for example).
 
-I chose this design because if the application evolves and that we need to handle new resources, it is not mandatory to have them persisted in the very same database than the one used for payments (Mongo).
+I chose this design because if the application evolves and that we need to handle new resources, it is not mandatory to have them persisted in the very same database than the one used for payments.
 
 Moreover, having self-contained packages per resource can also be the first step towards a micro-services architecture. A modular application is easier to migrate to an autonomous micro-service.
 
 ## HTTPS
 
-The application provides only an HTTP endpoint as in modern architectures, it's not part of the application anymore.
+The application provides only an HTTP endpoint as in modern architectures, it's not part of the application anymore to handle HTTPS.
 
 The TLS termination can be done by a load-balancer or by a service mesh deployed as a sidecar. 
 
@@ -36,4 +36,4 @@ Well, let's not dig too much into the details here...
 
 ## Conclusion
 
-In any case, that was cool! Thanks for your time :)
+In any case, that was a cool exercise! Thanks for your time :)

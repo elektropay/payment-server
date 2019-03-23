@@ -14,6 +14,7 @@ Here is an example of a payment request payload which can be handled by `payment
 The project structure is based on https://github.com/golang-standards/project-layout.
 
 * [/api](api): Swagger file.
+* [/docs](docs): Additional documentation (design).
 * [/githooks](githooks): Git hooks to be used by project maintainers.
 * [/main](main): Main package.
 * [/payment](payment): Payment package.
@@ -24,7 +25,7 @@ The project structure is based on https://github.com/golang-standards/project-la
 
 ## Design
 
-Please refer to [DESIGN.md](docs/design/README.md) or [DESIGN.pdf](DESIGN.pdf).
+Please refer to the design document ([markdown](/docs/design/README.md) or [pdf](/docs/design/design.pdf)).
 
 ## API Testing
 
