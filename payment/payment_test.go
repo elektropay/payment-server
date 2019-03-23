@@ -39,5 +39,13 @@ func TestPaymentToPaymentWithId(t *testing.T) {
 	assert.Equal(t, relationships, withId.Relationships)
 	assert.Equal(t, type_, withId.Type_)
 	assert.Equal(t, version, withId.Version)
-	assert.Equal(t, "localhost:80/"+paymentPrefix+"/"+id, withId.Links.Self)
+	assert.Equal(t, "localhost:80"+paymentPrefix+"/"+id, withId.Links.Self)
+}
+
+func TestPaymentToPaymentWithIdWithNilPayment(t *testing.T) {
+	id := "001"
+	uri := "localhost:80"
+	withId := paymentToPaymentWithId(id, uri, nil)
+	assert.Equal(t, id, withId.Id)
+	assert.Equal(t, "localhost:80"+paymentPrefix+"/"+id, withId.Links.Self)
 }
