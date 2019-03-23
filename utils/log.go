@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// Logger
+// Logger is the application logger
 var Logger *zap.Logger
 
 // Sugar is the sugar version of the logger
