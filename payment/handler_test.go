@@ -52,9 +52,9 @@ func TestDecodeInvalidRequest(t *testing.T) {
 	assert.NotEqual(t, 0, recorder.Body.Len())
 }
 
-func TestFormatPaymentResponse(t *testing.T) {
+func TestCreatePaymentResponse(t *testing.T) {
 	recorder := httptest.NewRecorder()
-	formatPaymentResponse(recorder, http.StatusTeapot, "id", "uri", &swagger.Payment{
+	createPaymentResponse(recorder, http.StatusTeapot, "id", "uri", &swagger.Payment{
 		Attributes: &swagger.PaymentAttributes{
 			Amount: "26.00",
 		},
@@ -74,18 +74,18 @@ func TestFormatPaymentResponse(t *testing.T) {
 	assert.Equal(t, "uri/v1/payment/id", response.Data.Links.Self)
 }
 
-func TestFormatPaymentResponseWithNilResponse(t *testing.T) {
+func TestCreatePaymentResponseWithNilResponse(t *testing.T) {
 	recorder := httptest.NewRecorder()
-	formatPaymentResponse(recorder, http.StatusTeapot, "id", "uri", nil, nil)
+	createPaymentResponse(recorder, http.StatusTeapot, "id", "uri", nil, nil)
 	assert.Equal(t, http.StatusTeapot, recorder.Code)
 	assert.Equal(t, 0, recorder.Body.Len())
 }
 
-func TestFormatPaymentsResponse(t *testing.T) {
+func TestCreatePaymentsResponse(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	id1 := bson.NewObjectId()
 	id2 := bson.NewObjectId()
-	formatPaymentsResponse(recorder, http.StatusTeapot, "uri", []Envelope{
+	createPaymentsResponse(recorder, http.StatusTeapot, "uri", []Envelope{
 		{
 			Id: id1,
 			Payment: &swagger.Payment{
@@ -118,9 +118,9 @@ func TestFormatPaymentsResponse(t *testing.T) {
 	assert.Equal(t, "2", response.Data[1].Attributes.Amount)
 }
 
-func TestFormatErrorResponse(t *testing.T) {
+func TestCreateErrorResponse(t *testing.T) {
 	recorder := httptest.NewRecorder()
-	formatErrorResponse(recorder, http.StatusTeapot, &swagger.ApiError{
+	createErrorResponse(recorder, http.StatusTeapot, &swagger.ApiError{
 		ErrorMessage: "message",
 		ErrorCode:    "code",
 	})
@@ -128,20 +128,20 @@ func TestFormatErrorResponse(t *testing.T) {
 	assert.Equal(t, `{"error_message":"message","error_code":"code"}`, recorder.Body.String())
 }
 
-func TestFormatErrorResponseWithNilError(t *testing.T) {
+func TestCreateErrorResponseWithNilError(t *testing.T) {
 	recorder := httptest.NewRecorder()
-	formatErrorResponse(recorder, http.StatusTeapot, nil)
+	createErrorResponse(recorder, http.StatusTeapot, nil)
 	assert.Equal(t, http.StatusTeapot, recorder.Code)
 	assert.Equal(t, 0, recorder.Body.Len())
 }
 
-func TestMapIdToHexWithValidId(t *testing.T) {
-	hex, err := mapIdToHex("5c97320fa86e346013ee6489")
+func TestToBsonObjectId(t *testing.T) {
+	hex, err := toBsonObjectId("5c97320fa86e346013ee6489")
 	assert.Nil(t, err)
 	assert.NotNil(t, hex)
 }
 
-func TestMapIdToHexWithInvalidId(t *testing.T) {
-	_, err := mapIdToHex("x")
+func TestToBsonObjectIdWithInvalidId(t *testing.T) {
+	_, err := toBsonObjectId("x")
 	assert.NotNil(t, err)
 }

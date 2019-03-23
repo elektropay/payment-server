@@ -21,16 +21,17 @@ const (
 	errorMessageHandler = "Unable to handle user request."
 )
 
+// handlerPaymentIdDelete handles /DELETE payment
 func handlerPaymentIdDelete(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 	id := parameters["id"]
 
-	hex, err := mapIdToHex(id)
+	hex, err := toBsonObjectId(id)
 	if err != nil {
 		utils.Logger.Warn(
 			"Error while decoding id", zap.Error(err))
 
-		formatErrorResponse(w, http.StatusBadRequest, &swagger.ApiError{
+		createErrorResponse(w, http.StatusBadRequest, &swagger.ApiError{
 			ErrorCode:    errorCodeBadRequest,
 			ErrorMessage: err.Error(),
 		})
@@ -43,32 +44,33 @@ func handlerPaymentIdDelete(w http.ResponseWriter, r *http.Request) {
 			utils.Logger.Warn("Unable to delete payment in Mongo: payment not found.",
 				zap.String("paymentId", id),
 				zap.Error(err))
-			formatErrorResponse(w, http.StatusNotFound, nil)
+			createErrorResponse(w, http.StatusNotFound, nil)
 			return
 		}
 
-		formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
+		createErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
 			ErrorCode:    errorCodeHandler,
 			ErrorMessage: errorMessageHandler,
 		})
 		return
 	}
 
-	formatPaymentResponse(w, http.StatusNoContent, id, externalApiUri, nil, nil)
+	createPaymentResponse(w, http.StatusNoContent, id, externalApiUri, nil, nil)
 }
 
+// handlerPaymentIdGet handles GET payment
 func handlerPaymentIdGet(w http.ResponseWriter, r *http.Request) {
 	var envelope Envelope
 
 	parameters := mux.Vars(r)
 	id := parameters["id"]
 
-	hex, err := mapIdToHex(id)
+	hex, err := toBsonObjectId(id)
 	if err != nil {
 		utils.Logger.Warn(
 			"Error while decoding id", zap.Error(err))
 
-		formatErrorResponse(w, http.StatusBadRequest, &swagger.ApiError{
+		createErrorResponse(w, http.StatusBadRequest, &swagger.ApiError{
 			ErrorCode:    errorCodeBadRequest,
 			ErrorMessage: err.Error(),
 		})
@@ -81,23 +83,24 @@ func handlerPaymentIdGet(w http.ResponseWriter, r *http.Request) {
 			utils.Logger.Warn("Unable to update payment in Mongo: payment not found.",
 				zap.String("paymentId", id),
 				zap.Error(err))
-			formatErrorResponse(w, http.StatusNotFound, nil)
+			createErrorResponse(w, http.StatusNotFound, nil)
 			return
 		}
 
-		formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
+		createErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
 			ErrorCode:    errorCodeHandler,
 			ErrorMessage: errorMessageHandler,
 		})
 		return
 	}
 
-	formatPaymentResponse(w, http.StatusOK, id, externalApiUri, envelope.Payment,
+	createPaymentResponse(w, http.StatusOK, id, externalApiUri, envelope.Payment,
 		func(paymentWithId *swagger.PaymentWithId) interface{} {
 			return paymentWithId
 		})
 }
 
+// handlerPaymentIdPut handles PUT payment
 func handlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
 	var payment swagger.PaymentUpdate
 	err := decodeRequest(&payment, w, r)
@@ -107,12 +110,12 @@ func handlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
 
 	parameters := mux.Vars(r)
 	id := parameters["id"]
-	hex, err := mapIdToHex(id)
+	hex, err := toBsonObjectId(id)
 	if err != nil {
 		utils.Logger.Warn(
 			"Error while decoding id", zap.Error(err))
 
-		formatErrorResponse(w, http.StatusBadRequest, &swagger.ApiError{
+		createErrorResponse(w, http.StatusBadRequest, &swagger.ApiError{
 			ErrorCode:    errorCodeBadRequest,
 			ErrorMessage: err.Error(),
 		})
@@ -129,21 +132,21 @@ func handlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
 			utils.Logger.Warn("Unable to update payment in Mongo: payment not found.",
 				zap.String("paymentId", id),
 				zap.Error(err))
-			formatErrorResponse(w, http.StatusNotFound, nil)
+			createErrorResponse(w, http.StatusNotFound, nil)
 			return
 		}
 
 		utils.Logger.Error("Unable to update payment in Mongo.",
 			zap.String("paymentId", id),
 			zap.Error(err))
-		formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
+		createErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
 			ErrorCode:    errorCodeHandler,
 			ErrorMessage: errorMessageHandler,
 		})
 		return
 	}
 
-	formatPaymentResponse(w, http.StatusCreated, id, externalApiUri, payment.Data,
+	createPaymentResponse(w, http.StatusCreated, id, externalApiUri, payment.Data,
 		func(paymentWithId *swagger.PaymentWithId) interface{} {
 			return swagger.PaymentUpdateResponse{
 				Data: paymentWithId,
@@ -151,20 +154,22 @@ func handlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
 		})
 }
 
+// handlerPaymentsGet handles GET payments
 func handlerPaymentsGet(w http.ResponseWriter, r *http.Request) {
 	var envelopes []Envelope
 
 	err := mongoClient.Find(nil).All(&envelopes)
 	if err != nil {
-		formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
+		createErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
 			ErrorCode:    errorCodeHandler,
 			ErrorMessage: errorMessageHandler,
 		})
 	}
 
-	formatPaymentsResponse(w, http.StatusOK, externalApiUri, envelopes)
+	createPaymentsResponse(w, http.StatusOK, externalApiUri, envelopes)
 }
 
+// handlerPaymentPost handles POST payment
 func handlerPaymentPost(w http.ResponseWriter, r *http.Request) {
 	var payment swagger.PaymentCreation
 	err := decodeRequest(&payment, w, r)
@@ -179,14 +184,14 @@ func handlerPaymentPost(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		utils.Logger.Error("Unable to create payment in Mongo.", zap.Error(err))
-		formatErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
+		createErrorResponse(w, http.StatusInternalServerError, &swagger.ApiError{
 			ErrorCode:    errorCodeHandler,
 			ErrorMessage: errorMessageHandler,
 		})
 		return
 	}
 
-	formatPaymentResponse(w, http.StatusCreated, id.Hex(), externalApiUri, payment.Data,
+	createPaymentResponse(w, http.StatusCreated, id.Hex(), externalApiUri, payment.Data,
 		func(paymentWithId *swagger.PaymentWithId) interface{} {
 			return swagger.PaymentCreationResponse{
 				Data: paymentWithId,
@@ -194,6 +199,8 @@ func handlerPaymentPost(w http.ResponseWriter, r *http.Request) {
 		})
 }
 
+// decodeRequest decodes an incoming HTTP request
+// In case of a problem, it writes a bad request status in the http.ResponseWriter
 func decodeRequest(v interface{}, w http.ResponseWriter, r *http.Request) error {
 	decoder := json.NewDecoder(r.Body)
 
@@ -202,7 +209,7 @@ func decodeRequest(v interface{}, w http.ResponseWriter, r *http.Request) error 
 		utils.Logger.Warn(
 			"Error while decoding request", zap.Error(err))
 
-		formatErrorResponse(w, http.StatusBadRequest, &swagger.ApiError{
+		createErrorResponse(w, http.StatusBadRequest, &swagger.ApiError{
 			ErrorCode:    errorCodeBadRequest,
 			ErrorMessage: err.Error(),
 		})
@@ -212,7 +219,9 @@ func decodeRequest(v interface{}, w http.ResponseWriter, r *http.Request) error 
 	return nil
 }
 
-func formatPaymentResponse(w http.ResponseWriter, status int, id, uri string, payment *swagger.Payment,
+// createPaymentResponse creates a payment response
+// It takes an objectResponse to wrap the response in a higher level structure like PaymentCreationResponse or PaymentUpdateResponse
+func createPaymentResponse(w http.ResponseWriter, status int, id, uri string, payment *swagger.Payment,
 	objectResponse func(*swagger.PaymentWithId) interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(status)
@@ -231,7 +240,8 @@ func formatPaymentResponse(w http.ResponseWriter, status int, id, uri string, pa
 	io.WriteString(w, string(b))
 }
 
-func formatPaymentsResponse(w http.ResponseWriter, status int, uri string, envelopes []Envelope) {
+// createPaymentResponse creates a payments response
+func createPaymentsResponse(w http.ResponseWriter, status int, uri string, envelopes []Envelope) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(status)
 
@@ -258,7 +268,9 @@ func formatPaymentsResponse(w http.ResponseWriter, status int, uri string, envel
 	io.WriteString(w, string(b))
 }
 
-func formatErrorResponse(w http.ResponseWriter, statusCode int, apiError *swagger.ApiError) {
+// createErrorResponse creates a response in case of an error
+// apiError input is optional
+func createErrorResponse(w http.ResponseWriter, statusCode int, apiError *swagger.ApiError) {
 	w.WriteHeader(statusCode)
 
 	if apiError == nil {
@@ -276,7 +288,8 @@ func formatErrorResponse(w http.ResponseWriter, statusCode int, apiError *swagge
 	io.WriteString(w, string(b))
 }
 
-func mapIdToHex(id string) (hex bson.ObjectId, err error) {
+// toBsonObjectId converts in string identifier in a bson.ObjectId
+func toBsonObjectId(id string) (hex bson.ObjectId, err error) {
 	// bson.ObjectIdHex panics if the identifier is invalid
 	// We need to recover from this panic and returns a proper error
 	defer func() {

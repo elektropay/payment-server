@@ -20,6 +20,7 @@ func CleanCollection() {
 	mongoClient.RemoveAll(nil)
 }
 
+// paymentToPaymentWithId converts a Payment in a PaymentWithId struture
 func paymentToPaymentWithId(id, uri string, payment *swagger.Payment) *swagger.PaymentWithId {
 	if payment == nil {
 		return &swagger.PaymentWithId{
