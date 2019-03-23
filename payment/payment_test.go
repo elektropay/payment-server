@@ -1,16 +1,17 @@
 package payment
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/teivah/payment-server/swagger"
-	"testing"
 )
 
 func TestPaymentToPaymentWithId(t *testing.T) {
 	id := "001"
 	uri := "localhost:80"
 	var version int32 = 1
-	type_ := "type"
+	paymentType := "type"
 	relationships := &swagger.PaymentRelationships{
 		PaymentAdmission: &swagger.PaymentRelationshipsPaymentAdmission{
 			Data: []swagger.PaymentAdmission{
@@ -25,7 +26,7 @@ func TestPaymentToPaymentWithId(t *testing.T) {
 
 	payment := swagger.Payment{
 		Version:        version,
-		Type_:          type_,
+		Type_:          paymentType,
 		Relationships:  relationships,
 		OrganisationId: organisation,
 		Attributes:     attributes,
@@ -37,7 +38,7 @@ func TestPaymentToPaymentWithId(t *testing.T) {
 	assert.Equal(t, attributes, withId.Attributes)
 	assert.Equal(t, organisation, withId.OrganisationId)
 	assert.Equal(t, relationships, withId.Relationships)
-	assert.Equal(t, type_, withId.Type_)
+	assert.Equal(t, paymentType, withId.Type_)
 	assert.Equal(t, version, withId.Version)
 	assert.Equal(t, "localhost:80"+paymentPrefix+"/"+id, withId.Links.Self)
 }

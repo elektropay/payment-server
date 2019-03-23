@@ -2,6 +2,7 @@ package payment
 
 import (
 	"fmt"
+
 	"github.com/spf13/viper"
 	"github.com/teivah/payment-server/swagger"
 )
@@ -14,6 +15,7 @@ func init() {
 		viper.GetInt("server.external.port"))
 }
 
+// CleanCollection clears the current Mongo collection
 func CleanCollection() {
 	mongoClient.RemoveAll(nil)
 }

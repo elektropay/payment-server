@@ -14,7 +14,6 @@ import (
 )
 
 type PaymentAttributes struct {
-
 	// Amount of money moved between the instructing agent and instructed agent
 	Amount string `json:"amount,omitempty"`
 
@@ -49,7 +48,7 @@ type PaymentAttributes struct {
 
 	Fx *PaymentAttributesFx `json:"fx,omitempty"`
 
-	// Unique identification, as assigned by the initiating party to unambigiously identify the transaction. This identification is an point-to-point reference and is passed on, unchanged, throughout the entire chain. Cannot includ leading, trailing or internal spaces.
+	// Unique identification, as assigned by the initiating party to unambigiously identify the transaction. This identification is an point-to-point reference and is passed on, unchanged, throughout the entire chain. Cannot include leading, trailing or internal spaces.
 	InstructionId string `json:"instruction_id,omitempty"`
 
 	IntermediaryBank *IntermediaryBankAccountHoldingEntity `json:"intermediary_bank,omitempty"`

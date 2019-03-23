@@ -3,13 +3,14 @@ package payment
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
-	"github.com/teivah/payment-server/swagger"
-	"gopkg.in/mgo.v2/bson"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/teivah/payment-server/swagger"
+	"gopkg.in/mgo.v2/bson"
 )
 
 func TestDecodeRequest(t *testing.T) {

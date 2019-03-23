@@ -11,14 +11,14 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Route struct {
-	Name        string
-	Method      string
-	Pattern     string
-	HandlerFunc http.HandlerFunc
+type route struct {
+	name        string
+	method      string
+	pattern     string
+	handlerFunc http.HandlerFunc
 }
 
-type Routes []Route
+type routeSlice []route
 
 const paymentApiVersion = "/v1/"
 const paymentPrefix = paymentApiVersion + "payment"
@@ -35,67 +35,68 @@ func logger(inner http.Handler, name string) http.Handler {
 	})
 }
 
+// NewRouter creates the payment router
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	for _, route := range routes {
 		var handler http.Handler
-		handler = route.HandlerFunc
-		handler = logger(handler, route.Name)
+		handler = route.handlerFunc
+		handler = logger(handler, route.name)
 
 		router.
-			Methods(route.Method).
-			Path(route.Pattern).
-			Name(route.Name).
+			Methods(route.method).
+			Path(route.pattern).
+			Name(route.name).
 			Handler(handler)
 	}
 
 	return router
 }
 
-func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World!")
+func index(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Payment API v1")
 }
 
-var routes = Routes{
-	Route{
+var routes = routeSlice{
+	route{
 		"Index",
 		"GET",
 		paymentApiVersion,
-		Index,
+		index,
 	},
 
-	Route{
+	route{
 		"PaymentIdDelete",
 		strings.ToUpper("Delete"),
 		paymentPrefix + "/{id}",
-		HandlerPaymentIdDelete,
+		handlerPaymentIdDelete,
 	},
 
-	Route{
+	route{
 		"PaymentIdGet",
 		strings.ToUpper("Get"),
 		paymentPrefix + "/{id}",
-		HandlerPaymentIdGet,
+		handlerPaymentIdGet,
 	},
 
-	Route{
+	route{
 		"PaymentIdPut",
 		strings.ToUpper("Put"),
 		paymentPrefix + "/{id}",
-		HandlerPaymentIdPut,
+		handlerPaymentIdPut,
 	},
 
-	Route{
+	route{
 		"PaymentsGet",
 		strings.ToUpper("Get"),
 		paymentsPrefix,
-		HandlerPaymentsGet,
+		handlerPaymentsGet,
 	},
 
-	Route{
+	route{
 		"PaymentsPost",
 		strings.ToUpper("Post"),
 		paymentPrefix,
-		HandlerPaymentPost,
+		handlerPaymentPost,
 	},
 }

@@ -9,7 +9,10 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// Logger
 var Logger *zap.Logger
+
+// Sugar is the sugar version of the logger
 var Sugar *zap.SugaredLogger
 
 func logger() {

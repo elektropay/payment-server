@@ -4,20 +4,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/teivah/payment-server/swagger"
 	"github.com/teivah/payment-server/utils"
 	"go.uber.org/zap"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"io"
-	"net/http"
 )
-
-type Envelope struct {
-	Id      bson.ObjectId    `json:"id"        bson:"_id,omitempty"`
-	Payment *swagger.Payment `json:"payment"`
-}
 
 const (
 	errorCodeBadRequest = "bad_request"
@@ -25,7 +21,7 @@ const (
 	errorMessageHandler = "Unable to handle user request."
 )
 
-func HandlerPaymentIdDelete(w http.ResponseWriter, r *http.Request) {
+func handlerPaymentIdDelete(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 	id := parameters["id"]
 
@@ -61,7 +57,7 @@ func HandlerPaymentIdDelete(w http.ResponseWriter, r *http.Request) {
 	formatPaymentResponse(w, http.StatusNoContent, id, externalApiUri, nil, nil)
 }
 
-func HandlerPaymentIdGet(w http.ResponseWriter, r *http.Request) {
+func handlerPaymentIdGet(w http.ResponseWriter, r *http.Request) {
 	var envelope Envelope
 
 	parameters := mux.Vars(r)
@@ -102,7 +98,7 @@ func HandlerPaymentIdGet(w http.ResponseWriter, r *http.Request) {
 		})
 }
 
-func HandlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
+func handlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
 	var payment swagger.PaymentUpdate
 	err := decodeRequest(&payment, w, r)
 	if err != nil {
@@ -155,7 +151,7 @@ func HandlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
 		})
 }
 
-func HandlerPaymentsGet(w http.ResponseWriter, r *http.Request) {
+func handlerPaymentsGet(w http.ResponseWriter, r *http.Request) {
 	var envelopes []Envelope
 
 	err := mongoClient.Find(nil).All(&envelopes)
@@ -169,7 +165,7 @@ func HandlerPaymentsGet(w http.ResponseWriter, r *http.Request) {
 	formatPaymentsResponse(w, http.StatusOK, externalApiUri, envelopes)
 }
 
-func HandlerPaymentPost(w http.ResponseWriter, r *http.Request) {
+func handlerPaymentPost(w http.ResponseWriter, r *http.Request) {
 	var payment swagger.PaymentCreation
 	err := decodeRequest(&payment, w, r)
 	if err != nil {

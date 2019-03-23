@@ -1,7 +1,10 @@
-package payment_server
+package test
 
 import (
 	"fmt"
+	"net/http"
+	"testing"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/phayes/freeport"
@@ -10,8 +13,6 @@ import (
 	"github.com/teivah/payment-server/utils"
 	"go.uber.org/zap"
 	"gopkg.in/resty.v1"
-	"net/http"
-	"testing"
 )
 
 func TestPayment(t *testing.T) {
