@@ -1,3 +1,6 @@
+# Payment Server
+[![Go Report Card](https://goreportcard.com/badge/github.com/reactivex/rxgo)](https://goreportcard.com/report/github.com/teivah/payment-server)
+
 # Archi
 puzzled with delete
 take a look at real API: no delete
