@@ -6,7 +6,7 @@ I chose to use Mongo for the persistence layer because I needed a schemaless sol
 
 If I had requirements regarding how the database would be used in the future (transactional workloads or analytics for example) or more information regarding the data model itself (many-to-one and/or many-to-many relations) maybe another solution could have been a better fit. Yet in this context, Mongo is a good choice (in my humble opinion :).
 
-## Project Structure
+## Project Structure
 
 The Mongo client ([db.go](/payment/db.go)) belongs to the `payment` package. This might be subject to discussions (compared to having it in a dedicated `mongo` or `db` package for example).
 
