@@ -50,3 +50,8 @@ func TestPaymentToPaymentWithIdWithNilPayment(t *testing.T) {
 	assert.Equal(t, id, withId.Id)
 	assert.Equal(t, "localhost:80"+paymentPrefix+"/"+id, withId.Links.Self)
 }
+
+func TestFormatPaymentSelfLink(t *testing.T) {
+	link := formatPaymentSelfLink("localhost:80/v1", "/uri", "id")
+	assert.Equal(t, "localhost:80/v1/uri/id", link)
+}

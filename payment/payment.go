@@ -26,7 +26,7 @@ func paymentToPaymentWithId(id, uri string, payment *swagger.Payment) *swagger.P
 		return &swagger.PaymentWithId{
 			Id: id,
 			Links: &swagger.Links{
-				Self: fmt.Sprintf("%s%s/%s", uri, paymentPrefix, id),
+				Self: formatPaymentSelfLink(uri, paymentPrefix, id),
 			},
 		}
 	}
@@ -40,7 +40,12 @@ func paymentToPaymentWithId(id, uri string, payment *swagger.Payment) *swagger.P
 		Type_:          payment.Type_,
 		Version:        payment.Version,
 		Links: &swagger.Links{
-			Self: fmt.Sprintf("%s%s/%s", uri, paymentPrefix, id),
+			Self: formatPaymentSelfLink(uri, paymentPrefix, id),
 		},
 	}
+}
+
+// formatPaymentSelfLink formats the payment self link used for HATEOAS responses
+func formatPaymentSelfLink(uri, paymentPrefix, id string) string {
+	return fmt.Sprintf("%s%s/%s", uri, paymentPrefix, id)
 }
