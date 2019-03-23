@@ -14,15 +14,13 @@ import (
 	"testing"
 )
 
-func TestCart(t *testing.T) {
+func TestPayment(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Payment Suite")
 }
 
 var _ = Describe("Payment", func() {
 	var (
-		//statusCode int
-		//payment    *swagger.PaymentWithId
 		host string
 	)
 
@@ -42,27 +40,55 @@ var _ = Describe("Payment", func() {
 		List payments
 	*/
 	Context("when posting 3 payments", func() {
-		_, _, err := postPayment(`{}`, host, paymentPath)
+		_, r1, err := postPayment(`{}`, host, paymentPath)
 		if err != nil {
 			Fail("Payment error")
 		}
-		_, _, err = postPayment(`{}`, host, paymentPath)
+		_, r2, err := postPayment(`{}`, host, paymentPath)
 		if err != nil {
 			Fail("Payment error")
 		}
-		_, _, err = postPayment(`{}`, host, paymentPath)
+		_, r3, err := postPayment(`{}`, host, paymentPath)
 		if err != nil {
 			Fail("Payment error")
 		}
-		s, r, err := getPayments(host, paymentsPath)
-		if err != nil {
-			Fail("Payment error")
-		}
-		It("has a 201 response status code", func() {
-			Expect(s).Should(Equal(http.StatusOK))
-		})
-		It("has 3 payments in total", func() {
-			Expect(3).Should(Equal(len(r.Data)))
+		Context("listing all payments", func() {
+			s, r, err := getPayments(host, paymentsPath)
+			if err != nil {
+				Fail("Payment error")
+			}
+			It("has a 201 response status code", func() {
+				Expect(s).Should(Equal(http.StatusOK))
+			})
+			It("has 3 payments in total", func() {
+				Expect(3).Should(Equal(len(r.Data)))
+			})
+			Context("when deleting these 3 payments", func() {
+				_, err := deletePayment(r1.Data.Id, host, paymentPath)
+				if err != nil {
+					Fail("Payment error")
+				}
+				_, err = deletePayment(r2.Data.Id, host, paymentPath)
+				if err != nil {
+					Fail("Payment error")
+				}
+				_, err = deletePayment(r3.Data.Id, host, paymentPath)
+				if err != nil {
+					Fail("Payment error")
+				}
+				Context("listing all payments", func() {
+					s, r, err := getPayments(host, paymentsPath)
+					if err != nil {
+						Fail("Payment error")
+					}
+					It("has a 201 response status code", func() {
+						Expect(s).Should(Equal(http.StatusOK))
+					})
+					It("has 0 payment in total", func() {
+						Expect(0).Should(Equal(len(r.Data)))
+					})
+				})
+			})
 		})
 	})
 
@@ -150,6 +176,39 @@ var _ = Describe("Payment", func() {
 				})
 				It("has the updated amount", func() {
 					Expect("11.0").Should(Equal(r.Attributes.Amount))
+				})
+			})
+		})
+	})
+	Context("when posting a payment", func() {
+		_, r, err := postPayment(&swagger.PaymentCreation{
+			Data: &swagger.Payment{
+				Version:        1,
+				Type_:          "payment",
+				OrganisationId: "organisation",
+				Attributes: &swagger.PaymentAttributes{
+					Amount: "10.0",
+				},
+			},
+		}, host, paymentPath)
+		if err != nil {
+			Fail("Payment error")
+		}
+		Context("when deleting this payment", func() {
+			s, _ := deletePayment(r.Data.Id, host, paymentPath)
+			if err != nil {
+				Fail("Payment error")
+			}
+			It("has a 204 response status code", func() {
+				Expect(s).Should(Equal(http.StatusNoContent))
+			})
+			Context("when deleting again this payment", func() {
+				s, _ := deletePayment(r.Data.Id, host, paymentPath)
+				if err != nil {
+					Fail("Payment error")
+				}
+				It("has a 404 response status code", func() {
+					Expect(s).Should(Equal(http.StatusNotFound))
 				})
 			})
 		})

@@ -221,6 +221,9 @@ func formatPaymentWithIdResponse(w http.ResponseWriter, status int, id, uri stri
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(status)
 
+	if objectResponse == nil {
+		return
+	}
 	withId := paymentToPaymentWithId(id, uri, payment)
 	object := objectResponse(withId)
 	b, err := json.Marshal(object)
