@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/teivah/payment-server/payment"
-
 	"github.com/spf13/viper"
+	"github.com/teivah/payment-server/payment"
 	"github.com/teivah/payment-server/utils"
 	"go.uber.org/zap"
 )

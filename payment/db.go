@@ -1,14 +1,14 @@
 package payment
 
 import (
-	"github.com/teivah/payment-server/swagger"
-	"gopkg.in/mgo.v2/bson"
 	"time"
 
 	"github.com/spf13/viper"
+	"github.com/teivah/payment-server/swagger"
 	"github.com/teivah/payment-server/utils"
 	"go.uber.org/zap"
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var mongoClient *mgo.Collection

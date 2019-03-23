@@ -6,9 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/teivah/payment-server/utils"
-
 	"github.com/gorilla/mux"
+	"github.com/teivah/payment-server/utils"
 )
 
 type route struct {
