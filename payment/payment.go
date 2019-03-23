@@ -14,6 +14,10 @@ func init() {
 		viper.GetInt("server.external.port"))
 }
 
+func CleanCollection() {
+	mongoClient.RemoveAll(nil)
+}
+
 func paymentToPaymentWithId(id, uri string, payment *swagger.Payment) *swagger.PaymentWithId {
 	if payment == nil {
 		return &swagger.PaymentWithId{

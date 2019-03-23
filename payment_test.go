@@ -27,40 +27,60 @@ var _ = Describe("Payment", func() {
 	)
 
 	const (
-		paymentsPath = "/v1/payments"
-		paymentPath  = "/v1/payment"
-		externalUri  = "localhost:8080"
+		paymentsPath   = "/v1/payments"
+		paymentPath    = "/v1/payment"
+		externalUri    = "localhost:8080"
+		unknownPayment = "5c97320fa86e346013ee6489"
 	)
 
 	Context("initialisation", func() {
 		host = startServer()
+		payment.CleanCollection()
 	})
 
-	Context("when posting an empty payment", func() {
-		s, r, err := postPaymentWithBody(`{}`, host, paymentPath)
+	/*
+		List payments
+	*/
+	Context("when posting 3 payments", func() {
+		_, _, err := postPayment(`{}`, host, paymentPath)
+		if err != nil {
+			Fail("Payment error")
+		}
+		_, _, err = postPayment(`{}`, host, paymentPath)
+		if err != nil {
+			Fail("Payment error")
+		}
+		_, _, err = postPayment(`{}`, host, paymentPath)
+		if err != nil {
+			Fail("Payment error")
+		}
+		s, r, err := getPayments(host, paymentsPath)
 		if err != nil {
 			Fail("Payment error")
 		}
 		It("has a 201 response status code", func() {
-			Expect(s).Should(Equal(http.StatusCreated))
+			Expect(s).Should(Equal(http.StatusOK))
 		})
-		It("can be retrieved with a get request", func() {
-			checkPaymentDoesExist(r.Data.Id, host, paymentPath)
-		})
-		It("has link matching its id", func() {
-			checkLink(*r.Data, externalUri, paymentPath)
+		It("has 3 payments in total", func() {
+			Expect(3).Should(Equal(len(r.Data)))
 		})
 	})
 
+	/*
+		Nominal cases
+	*/
 	Context("when posting a payment", func() {
-		s, r, err := postPayment(&swagger.Payment{
-			Version:        1,
-			Type_:          "payment",
-			OrganisationId: "organisation",
-			Attributes: &swagger.PaymentAttributes{
-				Amount: "10.0",
-			},
-		}, host, paymentPath)
+		s, r, err := postPayment(
+			&swagger.PaymentCreation{
+				Data: &swagger.Payment{
+					Version:        1,
+					Type_:          "payment",
+					OrganisationId: "organisation",
+					Attributes: &swagger.PaymentAttributes{
+						Amount: "10.0",
+					},
+				},
+			}, host, paymentPath)
 		if err != nil {
 			Fail("Payment error")
 		}
@@ -86,9 +106,69 @@ var _ = Describe("Payment", func() {
 			Expect("10.0").Should(Equal(r.Data.Attributes.Amount))
 		})
 	})
+	Context("when posting a payment", func() {
+		_, r, err := postPayment(&swagger.PaymentCreation{
+			Data: &swagger.Payment{
+				Version:        1,
+				Type_:          "payment",
+				OrganisationId: "organisation",
+				Attributes: &swagger.PaymentAttributes{
+					Amount: "10.0",
+				},
+			},
+		}, host, paymentPath)
+		if err != nil {
+			Fail("Payment error")
+		}
+		Context("when updating the amount", func() {
+			s, r, err := putPayment(&swagger.PaymentCreation{
+				Data: &swagger.Payment{
+					Version:        1,
+					Type_:          "payment",
+					OrganisationId: "organisation",
+					Attributes: &swagger.PaymentAttributes{
+						Amount: "11.0",
+					},
+				},
+			}, r.Data.Id, host, paymentPath)
+			if err != nil {
+				Fail("Payment error")
+			}
+			It("has a 201 response status code", func() {
+				Expect(s).Should(Equal(http.StatusCreated))
+			})
+			It("has the updated amount", func() {
+				Expect("11.0").Should(Equal(r.Data.Attributes.Amount))
+			})
+			Context("when getting this updated payment", func() {
+				s, r, err := getPayment(r.Data.Id, host, paymentPath)
+				if err != nil {
+					Fail("Payment error")
+				}
+				It("has a 200 response status code", func() {
+					Expect(s).Should(Equal(http.StatusOK))
+				})
+				It("has the updated amount", func() {
+					Expect("11.0").Should(Equal(r.Attributes.Amount))
+				})
+			})
+		})
+	})
 
+	/*
+		Invalid payment
+	*/
 	Context("when posting an invalid payment", func() {
-		s, _, err := postPaymentWithBody(`{{}`, host, paymentPath)
+		s, _, err := postPayment(`{{}`, host, paymentPath)
+		if err != nil {
+			Fail("Payment error")
+		}
+		It("has a 400 response status code", func() {
+			Expect(s).Should(Equal(http.StatusBadRequest))
+		})
+	})
+	Context("when putting an invalid payment", func() {
+		s, _, err := putPayment(`{{}`, unknownPayment, host, paymentPath)
 		if err != nil {
 			Fail("Payment error")
 		}
@@ -97,8 +177,29 @@ var _ = Describe("Payment", func() {
 		})
 	})
 
+	/*
+		Unknown payment
+	*/
 	Context("when getting an unknown payment", func() {
-		s, _, err := getPayment("5c97320fa86e346013ee6489", host, paymentPath)
+		s, _, err := getPayment(unknownPayment, host, paymentPath)
+		if err != nil {
+			Fail("Server error:" + err.Error())
+		}
+		It("has a 404 response status code", func() {
+			Expect(s).Should(Equal(http.StatusNotFound))
+		})
+	})
+	Context("when putting an unknown payment", func() {
+		s, _, err := putPayment(`{}`, unknownPayment, host, paymentPath)
+		if err != nil {
+			Fail("Server error:" + err.Error())
+		}
+		It("has a 404 response status code", func() {
+			Expect(s).Should(Equal(http.StatusNotFound))
+		})
+	})
+	Context("when deleting an unknown payment", func() {
+		s, err := deletePayment(unknownPayment, host, paymentPath)
 		if err != nil {
 			Fail("Server error:" + err.Error())
 		}
@@ -107,8 +208,29 @@ var _ = Describe("Payment", func() {
 		})
 	})
 
+	/*
+		Invalid identifier
+	*/
 	Context("when getting a payment with an invalid id", func() {
 		s, _, err := getPayment("x", host, paymentPath)
+		if err != nil {
+			Fail("Server error:" + err.Error())
+		}
+		It("has a 400 response status code", func() {
+			Expect(s).Should(Equal(http.StatusBadRequest))
+		})
+	})
+	Context("when putting a payment with an invalid id", func() {
+		s, _, err := putPayment(`{}`, "x", host, paymentPath)
+		if err != nil {
+			Fail("Server error:" + err.Error())
+		}
+		It("has a 400 response status code", func() {
+			Expect(s).Should(Equal(http.StatusBadRequest))
+		})
+	})
+	Context("when deleting a payment with an invalid id", func() {
+		s, err := deletePayment("x", host, paymentPath)
 		if err != nil {
 			Fail("Server error:" + err.Error())
 		}
@@ -143,6 +265,10 @@ func checkPaymentDoesExist(id, host, paymentPath string) {
 	Expect(http.StatusOK).Should(Equal(statusCode))
 }
 
+func checkLink(payment swagger.PaymentWithId, externalUri, paymentPath string) {
+	Expect(payment.Links.Self).Should(Equal(externalUri + paymentPath + "/" + payment.Id))
+}
+
 func getPayment(id, host, paymentPath string) (int, *swagger.PaymentWithId, error) {
 	response := swagger.PaymentWithId{}
 
@@ -157,18 +283,52 @@ func getPayment(id, host, paymentPath string) (int, *swagger.PaymentWithId, erro
 	return r.RawResponse.StatusCode, &response, nil
 }
 
-func checkLink(payment swagger.PaymentWithId, externalUri, paymentPath string) {
-	Expect(payment.Links.Self).Should(Equal(externalUri + paymentPath + "/" + payment.Id))
+func getPayments(host, paymentsPath string) (int, *swagger.PaymentDetailsListResponse, error) {
+	response := swagger.PaymentDetailsListResponse{}
+
+	r, err := resty.R().
+		SetResult(&response).
+		Get(host + paymentsPath)
+
+	if err != nil {
+		return 0, nil, err
+	}
+
+	return r.RawResponse.StatusCode, &response, nil
 }
 
-func postPayment(payment *swagger.Payment, host, paymentPath string) (
-	int, *swagger.PaymentCreationResponse, error) {
-	return postPaymentWithBody(&swagger.PaymentCreation{
-		Data: payment,
-	}, host, paymentPath)
+func deletePayment(id, host, paymentPath string) (
+	int, error) {
+	response := swagger.PaymentUpdateResponse{}
+	r, err := resty.R().
+		SetHeader("Content-Type", "application/json").
+		SetResult(&response).
+		Delete(host + paymentPath + "/" + id)
+	if err != nil {
+		utils.Logger.Error("Server error", zap.Error(err))
+		return 0, err
+	}
+
+	return r.RawResponse.StatusCode, nil
 }
 
-func postPaymentWithBody(body interface{}, host, paymentPath string) (
+func putPayment(body interface{}, id, host, paymentPath string) (
+	int, *swagger.PaymentUpdateResponse, error) {
+	response := swagger.PaymentUpdateResponse{}
+	r, err := resty.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(body).
+		SetResult(&response).
+		Put(host + paymentPath + "/" + id)
+	if err != nil {
+		utils.Logger.Error("Server error", zap.Error(err))
+		return 0, nil, err
+	}
+
+	return r.RawResponse.StatusCode, &response, nil
+}
+
+func postPayment(body interface{}, host, paymentPath string) (
 	int, *swagger.PaymentCreationResponse, error) {
 	response := swagger.PaymentCreationResponse{}
 	r, err := resty.R().

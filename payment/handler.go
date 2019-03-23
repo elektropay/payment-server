@@ -134,6 +134,7 @@ func HandlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
 				zap.String("paymentId", id),
 				zap.Error(err))
 			formatErrorResponse(w, http.StatusNotFound, nil)
+			return
 		}
 
 		utils.Logger.Error("Unable to update payment in Mongo.",
@@ -278,7 +279,7 @@ func formatErrorResponse(w http.ResponseWriter, statusCode int, apiError *swagge
 }
 
 func mapIdToHex(id string) (hex bson.ObjectId, err error) {
-	// bson.ObjectIdHex panics if the id is invalid
+	// bson.ObjectIdHex panics if the identifier is invalid
 	// We need to recover from this panic and returns a proper error
 	defer func() {
 		if r := recover(); r != nil {
