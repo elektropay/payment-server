@@ -5,22 +5,22 @@
 
 `payment-server` is a Go example application exposing a RESTful API and managing the persistence using Mongo 3.
 
-The API is based on this [Swagger](/api/swagger.yml). It is a subpart of the [Form3 Swagger](https://github.com/form3tech-oss/go-form3/blob/master/swagger.yaml) with minor variations.
+The API is based on [Swagger](/api/swagger.yml). It is a subpart of the [Form3 Swagger](https://github.com/form3tech-oss/go-form3/blob/master/swagger.yaml) with minor variations.
 
-Here is an example of a payment request payload understood by `payment-server`: [payment.json](/test/data/payment.json). 
+Here is an example of a payment request payload which can be handled by `payment-server`: [payment.json](/test/data/payment.json). 
 
 ## Project Structure
 
 The project structure is based on https://github.com/golang-standards/project-layout.
 
-* [/api](api): Swagger file
-* [/githooks](githooks): Git hooks to be used by project maintainers
-* [/main](main): Main package
-* [/payment](payment): Payment package
-* [/scripts](scripts): Utility bash scripts
-* [/swagger](swagger): Generated go files from Swagger
-* [/test](test): Test resources
-* [/utils](utils): Utilities package (logger, config)
+* [/api](api): Swagger file.
+* [/githooks](githooks): Git hooks to be used by project maintainers.
+* [/main](main): Main package.
+* [/payment](payment): Payment package.
+* [/scripts](scripts): Utility bash scripts.
+* [/swagger](swagger): Generated go files from Swagger.
+* [/test](test): Test resources.
+* [/utils](utils): Utilities package (logger, config).
 
 ## Design
 
@@ -28,7 +28,7 @@ Please refer to [DESIGN.md](DESIGN.md) or [DESIGN.pdf](DESIGN.pdf).
 
 ## API Testing
 
-Before testing, please run [start_local_env.sh](scripts/start_local_env.sh) that executes a Docker compose with:
+Before testing, please run [start_local_env.sh](scripts/start_local_env.sh) that will execute a Docker Compose with:
 * `mongo:3.4.20-jessie`
     * Ports: 27017 the Mongo HTTP port.
 * `mongo-express:0.49`
@@ -50,9 +50,3 @@ It contains BDD/Contract-based tests using `ginkgo` and `gomega`.
 | `mongo.payment.collection`    | payment                   | Mongo payment collection name.
 | `mongo.connection.timeout.ms` | 5000                      | Mongo connection timeout in milliseconds.
 | `mongo.request.timeout.ms`    | 500                       | Mongo request timeout in milliseconds.
-
-# Design
-take a look at real API: no delete
-No security: service mesh
-No coupling with the DB (e.g. brexit website, see thread)
-* Module => first step for ms

@@ -1,5 +1,3 @@
-# Design
-
 ## Persistence
 
 I chose to use Mongo for the persistence layer because I needed a schemaless solution to persist Json documents.
