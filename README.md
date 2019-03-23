@@ -25,7 +25,7 @@ The project structure is based on https://github.com/golang-standards/project-la
 
 ## Design
 
-Please refer to the design document ([markdown](/docs/design/README.md) or [pdf](/docs/design/design.pdf)).
+Please refer to the design document ([markdown](/docs/design/README.md) or [pdf](/docs/design/design.pdf) version).
 
 ## API Testing
 
