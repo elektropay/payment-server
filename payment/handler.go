@@ -45,7 +45,7 @@ func HandlerPaymentIdDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	formatPaymentWithIdResponse(w, http.StatusNoContent, id, externalApiUri, nil)
+	formatPaymentWithIdResponse(w, http.StatusNoContent, id, externalApiUri, nil, nil)
 }
 
 func HandlerPaymentIdGet(w http.ResponseWriter, r *http.Request) {
@@ -71,7 +71,10 @@ func HandlerPaymentIdGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	formatPaymentWithIdResponse(w, http.StatusOK, id, externalApiUri, envelope.Payment)
+	formatPaymentWithIdResponse(w, http.StatusOK, id, externalApiUri, envelope.Payment,
+		func(paymentWithId *swagger.PaymentWithId) interface{} {
+			return paymentWithId
+		})
 }
 
 func HandlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
@@ -107,7 +110,12 @@ func HandlerPaymentIdPut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	formatPaymentWithIdResponse(w, http.StatusCreated, id, externalApiUri, payment.Data)
+	formatPaymentWithIdResponse(w, http.StatusCreated, id, externalApiUri, payment.Data,
+		func(paymentWithId *swagger.PaymentWithId) interface{} {
+			return swagger.PaymentUpdateResponse{
+				Data: paymentWithId,
+			}
+		})
 }
 
 func HandlerPaymentsGet(w http.ResponseWriter, r *http.Request) {
@@ -145,7 +153,12 @@ func HandlerPaymentPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	formatPaymentWithIdResponse(w, http.StatusCreated, id.Hex(), externalApiUri, payment.Data)
+	formatPaymentWithIdResponse(w, http.StatusCreated, id.Hex(), externalApiUri, payment.Data,
+		func(paymentWithId *swagger.PaymentWithId) interface{} {
+			return swagger.PaymentCreationResponse{
+				Data: paymentWithId,
+			}
+		})
 }
 
 func decodeRequest(v interface{}, w http.ResponseWriter, r *http.Request) error {
@@ -166,13 +179,14 @@ func decodeRequest(v interface{}, w http.ResponseWriter, r *http.Request) error 
 	return nil
 }
 
-func formatPaymentWithIdResponse(w http.ResponseWriter, status int, id, uri string, payment *swagger.Payment) {
+func formatPaymentWithIdResponse(w http.ResponseWriter, status int, id, uri string, payment *swagger.Payment,
+	objectResponse func(*swagger.PaymentWithId) interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(status)
 
 	withId := paymentToPaymentWithId(id, uri, payment)
-
-	b, err := json.Marshal(withId)
+	object := objectResponse(withId)
+	b, err := json.Marshal(object)
 	if err != nil {
 		utils.Logger.Error("Unable to format payment response", zap.Error(err))
 		return

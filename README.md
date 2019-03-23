@@ -11,3 +11,4 @@ No coupling with the DB (e.g. brexit website, see thread)
 # Readme
 * Follow: https://github.com/golang-standards/project-layout
 * Module => first step for ms
+* Install pact

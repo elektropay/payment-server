@@ -16,8 +16,7 @@ func main() {
 
 	serverPort := viper.GetInt("server.port")
 	utils.Sugar.Infof("Starting server on port %d", serverPort)
-	err := http.ListenAndServe(fmt.Sprintf(":%d", serverPort),
-		router)
+	err := http.ListenAndServe(fmt.Sprintf(":%d", serverPort), router)
 
 	if err != nil {
 		utils.Logger.Fatal("Unable to start server", zap.Error(err))
